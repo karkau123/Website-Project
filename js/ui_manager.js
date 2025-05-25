@@ -2,58 +2,52 @@
 
 const UIManager = (() => {
     // --- DOM ELEMENT REFERENCES ---
-    const subjectsGrid = document.getElementById('subjects-grid');
-    const noResultsDiv = document.getElementById('no-results');
     const mainContainer = document.querySelector('main.container');
 
-    // Modal elements
-    const modalOverlay = document.getElementById('subtopic-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDetails = document.getElementById('modal-details');
-    const body = document.body;
+    let subjectsGridElement = null;
+    let noResultsDivElement = null;
+    let subjectDetailViewElement = null;
+    let currentActiveSubtopicButton = null;
+    let detailPageProgressElement = null; // To store the progress span in detail view
+
 
     /**
      * Calculates the completion progress for a given subject.
      * @param {object} subject - The subject data object.
-     * @returns {object} An object containing completed count, total count, and percentage.
+     * @returns {object} An object containing completedCount, totalCount, and percentage.
      */
     function calculateProgress(subject) {
         let completedCount = 0;
         let totalCount = 0;
-        subject.topics.forEach(topic => {
-            if (topic.subtopics && topic.subtopics.length > 0) {
-                totalCount += topic.subtopics.length;
-                completedCount += topic.subtopics.filter(st => st.completed).length;
-            }
-        });
-        const percentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+        if (subject && subject.topics) {
+            subject.topics.forEach(topic => {
+                if (topic.subtopics && topic.subtopics.length > 0) {
+                    topic.subtopics.forEach(subtopic => {
+                        totalCount++;
+                        if (subtopic.completed) {
+                            completedCount++;
+                        }
+                    });
+                }
+            });
+        }
+        const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
         return { completedCount, totalCount, percentage };
     }
 
-    /**
-     * Toggles the visibility of a subject card's details section.
-     * @param {HTMLElement} cardElement - The .subject-card element.
-     */
-    function toggleCardExpansion(cardElement) {
-        cardElement.classList.toggle('expanded');
-    }
 
     /**
-     * Updates the progress circle on a specific subject card.
-     * @param {HTMLElement} cardLinkElement - The .subject-card-link element.
-     * @param {object} subject - The updated subject data.
+     * Clears the main container of any existing views.
      */
-    function updateCardProgress(cardLinkElement, subject) {
-        const progress = calculateProgress(subject);
-        const progressCircleFg = cardLinkElement.querySelector('.progress-circle-fg');
-        const progressText = cardLinkElement.querySelector('.progress-circle-text');
-
-        if (progressCircleFg && progressText) {
-            const circumference = 2 * Math.PI * 40; // Assuming radius is 40
-            const offset = circumference - (progress.percentage / 100) * circumference;
-            progressCircleFg.style.strokeDashoffset = offset;
-            progressText.textContent = `${Math.round(progress.percentage)}%`;
+    function clearMainContainer() {
+        if (mainContainer) {
+            mainContainer.innerHTML = '';
         }
+        subjectsGridElement = null;
+        noResultsDivElement = null;
+        subjectDetailViewElement = null;
+        currentActiveSubtopicButton = null;
+        detailPageProgressElement = null;
     }
 
     /**
@@ -61,185 +55,247 @@ const UIManager = (() => {
      * @param {Array<object>} subjects - An array of subject data objects.
      */
     function renderSubjects(subjects) {
-        mainContainer.innerHTML = '';
-        mainContainer.className = 'container'; 
-        mainContainer.appendChild(subjectsGrid);
-        mainContainer.appendChild(noResultsDiv);
+        clearMainContainer();
+        mainContainer.classList.remove('subject-detail-layout');
 
-        subjectsGrid.innerHTML = '';
-        noResultsDiv.classList.toggle('hidden', subjects.length > 0);
+        const gridWrapper = document.createElement('div');
+        gridWrapper.className = 'subjects-grid-wrapper';
+        mainContainer.appendChild(gridWrapper);
+
+        subjectsGridElement = document.createElement('div');
+        subjectsGridElement.id = 'subjects-grid';
+        subjectsGridElement.className = 'subjects-grid';
+        gridWrapper.appendChild(subjectsGridElement);
+
+        noResultsDivElement = document.createElement('div');
+        noResultsDivElement.id = 'no-results';
+        noResultsDivElement.className = 'no-results hidden';
+        noResultsDivElement.innerHTML = `<h2>No Subjects Found</h2><p>Your search did not match any subjects. Try a different keyword.</p>`;
+        gridWrapper.appendChild(noResultsDivElement);
+
+
+        if (!subjects || subjects.length === 0) {
+            noResultsDivElement.classList.remove('hidden');
+            return;
+        } else {
+            noResultsDivElement.classList.add('hidden');
+        }
 
         subjects.forEach(subject => {
             const progress = calculateProgress(subject);
-            const circumference = 2 * Math.PI * 40; 
+            const circumference = 2 * Math.PI * 30; // Adjusted radius for card progress circle
             const offset = circumference - (progress.percentage / 100) * circumference;
 
-            // Updated cardHTML with new bulb icon and moved button
             const cardHTML = `
                 <a href="#" class="subject-card-link" data-subject-id="${subject.id}" aria-label="View details for ${subject.name}">
                     <article class="subject-card">
-                        <button class="card-action-icon-btn mindmap-card-btn bulb-btn" title="Open Mind Map for ${subject.name}" data-subject-id="${subject.id}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                              <path d="M9 18h6" stroke="currentColor" fill="none"/>
-                              <path d="M10 22h4" stroke="currentColor" fill="none"/>
-                              <path d="M12.874 14.48a5 5 0 0 1-1.748 0A5.002 5.002 0 0 1 8 9.33V5a4 4 0 0 1 8 0v4.33a5.002 5.002 0 0 1-3.126 5.15z" fill="currentColor" stroke="currentColor"/>
-                            </svg>
-                        </button>
-                        <div class="card-main">
-                            <div class="card-info">
+                        <div class="card-header-flex">
+                            <div class="card-content">
                                 <div class="card-title-group">
                                     <div class="card-icon">${subject.icon || ''}</div>
                                     <h2 class="card-title">${subject.name}</h2>
                                 </div>
                                 <p class="card-description">${subject.description}</p>
-                                </div>
-                            <div class="progress-circle" title="${progress.completedCount} of ${progress.totalCount} subtopics completed">
-                                <svg class="progress-circle-svg" width="70" height="70" viewBox="0 0 100 100">
-                                    <circle class="progress-circle-bg" cx="50" cy="50" r="40"></circle>
-                                    <circle class="progress-circle-fg" cx="50" cy="50" r="40"
+                            </div>
+                            <div class="card-progress-circle" title="${progress.completedCount} of ${progress.totalCount} subtopics completed">
+                                <svg class="progress-circle-svg" width="70" height="70" viewBox="0 0 70 70">
+                                    <circle class="progress-circle-bg" cx="35" cy="35" r="30"></circle>
+                                    <circle class="progress-circle-fg" cx="35" cy="35" r="30"
                                         stroke-dasharray="${circumference}"
                                         stroke-dashoffset="${offset}">
                                     </circle>
                                 </svg>
-                                <span class="progress-circle-text">${Math.round(progress.percentage)}%</span>
+                                <span class="progress-circle-text">${progress.percentage}%</span>
                             </div>
                         </div>
-
-                        <div class="card-border-bottom">
-                            <button class="expand-btn" aria-label="Toggle topic list">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <div class="card-footer-icon">
+                             <button class="mindmap-card-btn" title="Open Mind Map for ${subject.name}" data-subject-id="${subject.id}" aria-label="Open Mind Map for ${subject.name}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="M9 18h6" stroke="currentColor" fill="none"/>
+                                  <path d="M10 22h4" stroke="currentColor" fill="none"/>
+                                  <path d="M12.874 14.48a5 5 0 0 1-1.748 0A5.002 5.002 0 0 1 8 9.33V5a4 4 0 0 1 8 0v4.33a5.002 5.002 0 0 1-3.126 5.15z" fill="currentColor" stroke="currentColor"/>
+                                </svg>
                             </button>
-                        </div>
-
-                        <div class="card-details">
-                            ${subject.topics.map((topic, topicIndex) => `
-                                <div class="topic-group">
-                                    <h3>${topic.name}</h3>
-                                    <ul class="subtopics-list">
-                                        ${(topic.subtopics || []).map((subtopic, subtopicIndex) => `
-                                            <li class="subtopic-item">
-                                                <input type="checkbox" id="subtopic-${subject.id}-${topicIndex}-${subtopicIndex}" 
-                                                    data-topic-index="${topicIndex}" data-subtopic-index="${subtopicIndex}"
-                                                    ${subtopic.completed ? 'checked' : ''}>
-                                                <label for="subtopic-${subject.id}-${topicIndex}-${subtopicIndex}"
-                                                    data-subject-id="${subject.id}" data-topic-idx="${topicIndex}" data-subtopic-idx="${subtopicIndex}"
-                                                    title="Click to view details for ${subtopic.name}">
-                                                    ${subtopic.name}
-                                                </label>
-                                            </li>
-                                        `).join('')}
-                                    </ul>
-                                </div>
-                            `).join('')}
-
-                            <div class="quick-revision-container">
-                                <button class="quick-revision-btn" data-subject-id="${subject.id}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.25278V19.2528M12 6.25278C10.8321 5.47686 9.24649 5 7.5 5C5.1571 5 3.24104 6.8283 3.0249 9.11833M12 6.25278C13.1679 5.47686 14.7535 5 16.5 5C18.8429 5 20.759 6.8283 20.9751 9.11833"></path><path d="M10 10.5C10 11.3284 9.32843 12 8.5 12C7.67157 12 7 11.3284 7 10.5C7 9.67157 7.67157 9 8.5 9C9.32843 9 10 9.67157 10 10.5Z"></path><path d="M17 10.5C17 11.3284 16.3284 12 15.5 12C14.6716 12 14 11.3284 14 10.5C14 9.67157 14.6716 9 15.5 9C16.3284 9 17 9.67157 17 10.5Z"></path></svg>
-                                    Quick Revision
-                                </button>
-                            </div>
                         </div>
                     </article>
                 </a>
             `;
-            subjectsGrid.insertAdjacentHTML('beforeend', cardHTML);
+            subjectsGridElement.insertAdjacentHTML('beforeend', cardHTML);
         });
     }
 
     /**
-     * Renders the Quick Revision page for a specific subject.
-     * @param {object} subject - The subject data object to render.
+     * Updates the progress indicator on the subject detail page.
+     * @param {string} subjectId - The ID of the subject to update progress for.
      */
-    function renderQuickRevisionPage(subject) {
-        mainContainer.innerHTML = '';
-        mainContainer.classList.add('revision-view');
+    function updateSubjectDetailProgress(subjectId) {
+        const subject = DataManager.getSubjectById(subjectId);
+        if (subject && detailPageProgressElement) {
+            const progress = calculateProgress(subject);
+            detailPageProgressElement.textContent = `(${progress.percentage}%)`;
+            // Update progress circle on the detail page header
+            const progressCircleFg = document.querySelector('.detail-page-header-progress .progress-circle-fg');
+            const progressText = document.querySelector('.detail-page-header-progress .progress-circle-text');
+            if (progressCircleFg && progressText) {
+                const circumference = 2 * Math.PI * 20; // Radius for header progress circle
+                const offset = circumference - (progress.percentage / 100) * circumference;
+                progressCircleFg.style.strokeDashoffset = offset;
+                progressText.textContent = `${progress.percentage}%`;
+            }
+        }
+    }
 
-        let revisionHTML = `
-            <div class="revision-header">
-                <button id="back-to-subjects-btn" class="back-btn" aria-label="Go back to subjects list">
+
+    /**
+     * Renders the subject detail page with a left navigation panel and a right content panel.
+     * @param {object} subject - The subject data object.
+     */
+    function renderSubjectDetailPage(subject) {
+        clearMainContainer();
+        mainContainer.classList.add('subject-detail-layout');
+
+        subjectDetailViewElement = document.createElement('div');
+        subjectDetailViewElement.className = 'subject-detail-view';
+
+        const navPanel = document.createElement('div');
+        navPanel.className = 'subject-nav-panel';
+
+        const progress = calculateProgress(subject);
+        const headerCircumference = 2 * Math.PI * 20; // Radius for header progress circle
+        const headerOffset = headerCircumference - (progress.percentage / 100) * headerCircumference;
+
+
+        let navHTML = `
+            <div class="subject-detail-header">
+                <button id="back-to-subjects-btn" class="back-to-subjects-btn" aria-label="Go back to subjects list">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                     Back
                 </button>
-                <h1 class="revision-title">${subject.name} Revision</h1>
+                <div class="detail-page-title-container">
+                    <h2 class="detail-page-title">${subject.name}</h2>
+                    <div class="detail-page-header-progress" title="${progress.completedCount} of ${progress.totalCount} subtopics completed">
+                        <svg class="progress-circle-svg" width="50" height="50" viewBox="0 0 50 50">
+                            <circle class="progress-circle-bg" cx="25" cy="25" r="20"></circle>
+                            <circle class="progress-circle-fg" cx="25" cy="25" r="20"
+                                stroke-dasharray="${headerCircumference}"
+                                stroke-dashoffset="${headerOffset}">
+                            </circle>
+                        </svg>
+                        <span class="progress-circle-text">${progress.percentage}%</span>
+                    </div>
+                </div>
+                <p class="detail-page-description">${subject.description}</p>
             </div>
-            <div class="revision-content">
+        `;
+        // Store the span for live updates
+        // Note: This was the old way, now using the circle above.
+        // detailPageProgressElement = document.createElement('span');
+        // detailPageProgressElement.id = 'detail-page-progress-value';
+        // detailPageProgressElement.textContent = `(${progress.percentage}%)`;
+        // // This needs to be inserted into the navHTML or appended to the title container.
+        // // For simplicity, the circle is directly in navHTML. We'll update it via updateSubjectDetailProgress.
+
+
+        if (subject.topics && subject.topics.length > 0) {
+            subject.topics.forEach((topic, topicIndex) => {
+                navHTML += `
+                    <div class="nav-topic-group">
+                        <h3>${topic.name}</h3>
+                        <ul class="nav-subtopics-list">
+                            ${(topic.subtopics || []).map((subtopic, subtopicIndex) => `
+                                <li class="nav-subtopic-item">
+                                    <input type="checkbox" id="subtopic-chk-${subject.id}-${topicIndex}-${subtopicIndex}"
+                                           data-subject-id="${subject.id}" data-topic-index="${topicIndex}" data-subtopic-index="${subtopicIndex}"
+                                           ${subtopic.completed ? 'checked' : ''}>
+                                    <label for="subtopic-chk-${subject.id}-${topicIndex}-${subtopicIndex}" class="nav-subtopic-label-button"
+                                           data-subject-id="${subject.id}" data-topic-index="${topicIndex}" data-subtopic-index="${subtopicIndex}">
+                                        ${subtopic.name}
+                                    </label>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+        } else {
+            navHTML += '<p>No topics available for this subject.</p>';
+        }
+        navPanel.innerHTML = navHTML;
+
+        const contentPanel = document.createElement('div');
+        contentPanel.className = 'subject-content-panel';
+        contentPanel.id = 'subject-content-area';
+        contentPanel.innerHTML = `
+            <div class="content-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <p>Select a subtopic from the left to view its details.</p>
+            </div>
         `;
 
-        subject.topics.forEach(topic => {
-            if (topic.subtopics && topic.subtopics.length > 0) {
-                revisionHTML += `
-                    <section class="revision-topic-group" aria-labelledby="topic-title-${topic.name.replace(/\s+/g, '-')}">
-                        <h3 id="topic-title-${topic.name.replace(/\s+/g, '-')}">${topic.name}</h3>
-                        <div class="revision-subtopics-list">
-                `;
-                topic.subtopics.forEach(subtopic => {
-                    revisionHTML += `
-                        <div class="revision-subtopic-item">
-                            <h4>${subtopic.name}</h4>
-                            <div class="revision-subtopic-details">
-                                ${subtopic.details || '<p>No details available for this topic yet.</p>'}
-                            </div>
-                        </div>
-                    `;
-                });
-                revisionHTML += `</div></section>`;
-            }
-        });
+        subjectDetailViewElement.appendChild(navPanel);
+        subjectDetailViewElement.appendChild(contentPanel);
+        mainContainer.appendChild(subjectDetailViewElement);
 
-        revisionHTML += `</div>`;
-        mainContainer.innerHTML = revisionHTML;
-    }
+        // After appending, find the progress element if we were using the span approach
+        // detailPageProgressElement = document.getElementById('detail-page-progress-value');
+        // For the circle approach, updateSubjectDetailProgress will find it.
 
-    /**
-     * Opens the modal to show details for a list of subtopics.
-     * @param {string} title - The title for the modal (usually the topic name).
-     * @param {Array<object>} subtopics - The array of subtopics to display.
-     * @param {number} [clickedSubtopicIndex=0] - The index of the subtopic that was clicked to open the modal.
-     */
-    function openModal(title, subtopics, clickedSubtopicIndex = 0) {
-        modalTitle.textContent = title;
-        modalDetails.innerHTML = ''; 
-
-        subtopics.forEach(subtopic => {
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'modal-subtopic-entry';
-            entryDiv.id = `modal-subtopic-${subtopic.name.replace(/\s+/g, '-')}`;
-            entryDiv.innerHTML = `
-                <h3 class="modal-subtopic-name">${subtopic.name}</h3>
-                <div class="modal-subtopic-details-text">
-                    ${subtopic.details || '<p>Details for this topic are not yet available.</p>'}
-                </div>
-            `;
-            modalDetails.appendChild(entryDiv);
-        });
-
-        modalOverlay.classList.remove('hidden');
-        body.classList.add('modal-open');
-
-        const clickedElement = modalDetails.children[clickedSubtopicIndex];
-        if (clickedElement) {
-            modalDetails.scrollTop = clickedElement.offsetTop - modalDetails.offsetTop;
-        } else {
-            modalDetails.scrollTop = 0;
+        const firstSubtopicLabel = navPanel.querySelector('.nav-subtopic-label-button');
+        if (firstSubtopicLabel) {
+            // Simulate click on the label to load content and set active state
+            const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+            firstSubtopicLabel.dispatchEvent(event);
         }
     }
 
     /**
-     * Closes the subtopic details modal.
+     * Renders the content of a selected subtopic in the right panel.
+     * @param {object} subtopic - The subtopic object.
+     * @param {HTMLElement} clickedLabel - The label element that was clicked.
      */
-    function closeModal() {
-        modalOverlay.classList.add('hidden');
-        body.classList.remove('modal-open');
+    function renderSubtopicContent(subtopic, clickedLabel) {
+        const contentArea = document.getElementById('subject-content-area');
+        if (!contentArea) return;
+
+        if (currentActiveSubtopicButton) {
+            currentActiveSubtopicButton.classList.remove('active');
+        }
+        if (clickedLabel) {
+            clickedLabel.classList.add('active');
+            currentActiveSubtopicButton = clickedLabel;
+        }
+
+        if (subtopic && subtopic.details) {
+            contentArea.innerHTML = `
+                <h3 class="subtopic-content-title">${subtopic.name}</h3>
+                <div class="subtopic-content-details">
+                    ${subtopic.details}
+                </div>
+            `;
+        } else if (subtopic) {
+             contentArea.innerHTML = `
+                <h3 class="subtopic-content-title">${subtopic.name}</h3>
+                <div class="subtopic-content-details">
+                    <p>No details available for this subtopic yet.</p>
+                </div>
+            `;
+        } else {
+            contentArea.innerHTML = `
+                <div class="content-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><alert-circle cx="12" cy="12" r="10"></alert-circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <p>Could not load content for the selected subtopic.</p>
+                </div>
+            `;
+        }
     }
+
 
     // --- PUBLIC API ---
     return {
-        getSubjectsGridElement: () => subjectsGrid,
+        getSubjectsGridElement: () => subjectsGridElement,
         renderSubjects,
-        updateCardProgress,
-        toggleCardExpansion,
-        openModal,
-        closeModal,
-        renderQuickRevisionPage
+        renderSubjectDetailPage,
+        renderSubtopicContent,
+        updateSubjectDetailProgress // Expose this function
     };
 })();
