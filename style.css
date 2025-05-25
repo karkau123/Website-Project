@@ -30,11 +30,14 @@ body.modal-open {
     --header-shadow: 0 6px 12px -2px rgba(0,0,0,0.07), 0 3px 7px -3px rgba(0,0,0,0.07);
     --scrollbar-thumb-bg: #c7c7c7;
     --scrollbar-track-bg: var(--input-bg);
-    --checkbox-bg-checked: #22c55e; /* Green color for the checkbox background when checked */
-    --checkbox-border-checked: #22c55e; /* Green color for the checkbox border when checked */
-    --button-bg: #4f46e5; /* Indigo for buttons */
+    --checkbox-bg-checked: #22c55e;
+    --checkbox-border-checked: #22c55e;
+    --button-bg: #4f46e5;
     --button-text: #ffffff;
     --button-hover-bg: #4338ca;
+    --bulb-color: #DAA520; /* DarkGoldenrod for the bulb */
+    --bulb-hover-color: #B8860B; /* Slightly darker for hover */
+    --bulb-hover-bg: rgba(218, 165, 32, 0.1);
 }
 
 html.dark-mode {
@@ -51,11 +54,14 @@ html.dark-mode {
     --header-shadow: 0 6px 12px -2px rgba(0,0,0,0.25), 0 3px 7px -3px rgba(0,0,0,0.25);
     --scrollbar-thumb-bg: #555;
     --scrollbar-track-bg: var(--input-bg);
-    --checkbox-bg-checked: #4ade80; /* Lighter green for dark mode when checked */
-    --checkbox-border-checked: #4ade80; /* Lighter green for dark mode border when checked */
-    --button-bg: #6366f1; /* Lighter indigo for dark mode */
+    --checkbox-bg-checked: #4ade80;
+    --checkbox-border-checked: #4ade80;
+    --button-bg: #6366f1;
     --button-text: #ffffff;
     --button-hover-bg: #4f46e5;
+    --bulb-color: #FFCA28; /* Brighter yellow for dark mode bulb */
+    --bulb-hover-color: #FFB300; 
+    --bulb-hover-bg: rgba(255, 202, 40, 0.15);
 }
 
 body {
@@ -71,11 +77,24 @@ body {
 .header-container { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 2rem; max-width: 1100px; margin: 0 auto; }
 .logo { font-size: 1.85rem; font-weight: 700; }
 .logo-accent { color: var(--accent-color); }
-.header-controls { display: flex; align-items: center; gap: 1.25rem; }
+.header-controls { display: flex; align-items: center; gap: 1rem; }
 #search-input { background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.65rem 0.85rem 0.65rem 2.75rem; font-size: 1rem; min-width: 250px; }
 #search-input::placeholder { color: var(--subtle-text); }
-#theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-color); padding: 0.6rem; border-radius: 99px; display: flex; align-items: center; justify-content: center; }
-#theme-toggle svg { width: 24px; height: 24px; }
+
+.header-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.header-icon-btn:hover { background-color: var(--input-bg); }
+.header-icon-btn svg { width: 24px; height: 24px; }
 .sun-icon { display: none; }
 .moon-icon { display: block; }
 html.dark-mode .sun-icon { display: block; }
@@ -83,43 +102,91 @@ html.dark-mode .moon-icon { display: none; }
 .search-wrapper { position: relative; }
 .search-wrapper .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--subtle-text); width: 20px; height: 20px; }
 
-/* Main content area adjustments */
 main.container { padding-top: 6.5rem; }
-main.container.revision-view {
-    padding-top: 2rem; /* Less padding at top for revision view */
-    max-width: 900px; /* Max width for revision content */
-    margin: 0 auto; /* Center revision content */
-}
-
+main.container.revision-view { padding-top: 2rem; max-width: 900px; margin: 0 auto; }
 
 /* --- SUBJECTS GRID --- */
 .subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
 .no-results { text-align: center; padding: 4rem 1rem; color: var(--subtle-text); }
 
-/* --- NEW SUBJECT CARD --- */
+/* --- SUBJECT CARD --- */
 .subject-card-link { text-decoration: none; color: inherit; display: block; outline: none; }
 .subject-card-link:focus-visible .subject-card { box-shadow: 0 0 0 3px var(--bg-color), 0 0 0 5px var(--accent-color); }
-.subject-card { background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); overflow: visible; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; position: relative; display: flex; flex-direction: column; }
+.subject-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    overflow: visible;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative; /* Crucial for absolute positioning of child elements */
+    display: flex;
+    flex-direction: column;
+}
 .subject-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.08); }
+
 .card-main { padding: 1.75rem; display: flex; justify-content: space-between; align-items: center; }
-.card-info { flex-grow: 1; margin-right: 1rem; }
+.card-info { flex-grow: 1; margin-right: 1rem; display: flex; flex-direction: column; }
 .card-title-group { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
 .card-icon svg { width: 36px; height: 36px; }
 .card-title { font-size: 1.5rem; font-weight: 600; }
-.card-description { color: var(--subtle-text); font-size: 0.9rem; line-height: 1.5; }
+.card-description { color: var(--subtle-text); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
 
-/* Circular Progress Indicator */
-.progress-circle { width: 70px; height: 70px; position: relative; flex-shrink: 0; }
+
+/* Base styles for icon buttons within cards */
+.card-action-icon-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--subtle-text);
+    padding: 0.4rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+.card-action-icon-btn:hover {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--accent-color);
+}
+.card-action-icon-btn svg { width: 18px; height: 18px; }
+
+
+/* Specific styles for the top-right Bulb button */
+.subject-card .bulb-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 5;
+    background-color: transparent;
+    border: none;
+    color: var(--bulb-color);
+    padding: 0.25rem;
+    width: 36px;
+    height: 36px;
+}
+
+.subject-card .bulb-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.subject-card .bulb-btn:hover {
+    background-color: var(--bulb-hover-bg);
+    color: var(--bulb-hover-color);
+}
+
+
+.progress-circle { width: 70px; height: 70px; position: relative; flex-shrink: 0; align-self: center; }
 .progress-circle-svg { transform: rotate(-90deg); }
 .progress-circle-bg, .progress-circle-fg { fill: none; stroke-width: 8; }
 .progress-circle-bg { stroke: var(--input-bg); }
 .progress-circle-fg { stroke: var(--accent-color); stroke-linecap: round; transition: stroke-dashoffset 0.5s ease-out; }
 .progress-circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1rem; font-weight: 600; color: var(--accent-text-color); }
 
-/* Expand Button Container */
 .card-border-bottom { height: 16px; position: relative; border-top: 1px solid var(--border-color); margin: 0 1.5rem; flex-shrink: 0; }
-
-/* Collapsible Details */
 .card-details { max-height: 0; overflow-y: auto; background-color: rgba(0,0,0,0.02); padding: 0 1.5rem; transition: max-height 0.4s ease-out, padding-top 0.4s ease-out, padding-bottom 0.4s ease-out; flex-grow: 1; min-height: 0; }
 html.dark-mode .card-details { background-color: rgba(0,0,0,0.15); }
 .subject-card.expanded .card-details { max-height: 40vh; padding-top: 1.5rem; padding-bottom: 1.5rem; }
@@ -131,7 +198,6 @@ html.dark-mode .card-details { background-color: rgba(0,0,0,0.15); }
 .expand-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--subtle-text); cursor: pointer; border-radius: 99px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); transition: transform 0.3s, background-color 0.2s; z-index: 1; }
 .subject-card.expanded .expand-btn svg { transform: rotate(180deg); }
 
-/* Topics & Subtopics List */
 .topics-list { list-style: none; margin-top: 1rem; }
 .topic-group h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; padding-left: 0.5rem; position: sticky; top: -1.5rem; background-color: inherit; z-index: 1; padding-top: 0.5rem; margin-left: -0.5rem; padding-right: 0.5rem; }
 html.dark-mode .topic-group h3 { background-color: var(--card-bg); }
@@ -139,277 +205,51 @@ html.dark-mode .topic-group h3 { background-color: var(--card-bg); }
 .subtopic-item { display: flex; align-items: center; padding: 0.5rem; border-radius: 6px; }
 .subtopic-item:hover { background-color: rgba(0,0,0,0.05); }
 html.dark-mode .subtopic-item:hover { background-color: rgba(255,255,255,0.05); }
-.subtopic-item input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    margin-right: 0.75rem;
-    /* Hide default checkbox appearance */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border: 2px solid var(--subtle-text); /* Default border color */
-    border-radius: 4px;
-    background-color: var(--card-bg); /* Default background */
-    transition: background-color 0.2s, border-color 0.2s;
-    flex-shrink: 0; /* Prevent checkbox from shrinking */
-}
-
-.subtopic-item input[type="checkbox"]:checked {
-    background-color: var(--checkbox-bg-checked); /* Green background when checked */
-    border-color: var(--checkbox-border-checked); /* Green border when checked */
-    /* SVG for a white tick mark */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-    background-size: 80%; /* Adjust size of the tick */
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
+.subtopic-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; margin-right: 0.75rem; -webkit-appearance: none; -moz-appearance: none; appearance: none; border: 2px solid var(--subtle-text); border-radius: 4px; background-color: var(--card-bg); transition: background-color 0.2s, border-color 0.2s; flex-shrink: 0; }
+.subtopic-item input[type="checkbox"]:checked { background-color: var(--checkbox-bg-checked); border-color: var(--checkbox-border-checked); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); background-size: 80%; background-repeat: no-repeat; background-position: center; }
 .subtopic-item label { cursor: pointer; transition: color 0.2s; font-size: 0.9rem; flex-grow: 1; }
 .subtopic-item label:hover { color: var(--accent-text-color); }
 .subtopic-item input:checked + label { text-decoration: line-through; color: var(--subtle-text); }
 .subtopic-item input:checked + label:hover { color: var(--subtle-text); }
 
-/* Quick Revision Button */
-.quick-revision-container {
-    padding-top: 1rem;
-    border-top: 1px dashed var(--border-color); /* Subtle separator */
-    margin-top: 1rem;
-    text-align: center;
-}
-
-.quick-revision-btn, .back-btn {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.06);
-}
-
-.quick-revision-btn:hover, .back-btn:hover {
-    background-color: var(--button-hover-bg);
-    transform: translateY(-2px);
-}
-
-.quick-revision-btn svg, .back-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke: var(--button-text);
-}
-
+.quick-revision-container { padding-top: 1rem; border-top: 1px dashed var(--border-color); margin-top: 1rem; text-align: center; }
+.quick-revision-btn, .back-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 0.75rem 1.25rem; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.06); }
+.quick-revision-btn:hover, .back-btn:hover { background-color: var(--button-hover-bg); transform: translateY(-2px); }
+.quick-revision-btn svg, .back-btn svg { width: 18px; height: 18px; stroke: var(--button-text); }
 
 /* --- MODAL STYLES --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 200; 
-    opacity: 0; 
-    transition: opacity 0.3s ease-in-out;
-    padding: 1rem; 
-}
-.modal-overlay:not(.hidden) {
-    opacity: 1; 
-}
-.modal-content { /* This is the scrollable container for modal's content */
-    background-color: var(--card-bg);
-    padding: 0; /* Remove padding here, will add to header/body sections */
-    border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-    width: 90%;
-    max-width: 950px; /* Increased max-width for a wider modal */
-    max-height: 85vh; 
-    display: flex; /* ADDED: For flex layout */
-    flex-direction: column; /* ADDED: Stack title, body, footer */
-    position: relative;
-    transform: scale(0.95); 
-    transition: transform 0.3s ease-in-out;
-}
-.modal-overlay:not(.hidden) .modal-content {
-    transform: scale(1); 
-}
-
-.modal-header { /* ADDED: Container for title and close button */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0; /* Prevent header from shrinking */
-}
-
-.modal-title-style { 
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--accent-text-color);
-    margin-bottom: 0; /* Removed margin, handled by modal-header padding */
-}
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 2rem; 
-    font-weight: bold;
-    color: var(--subtle-text);
-    cursor: pointer;
-    line-height: 1;
-    padding: 0.25rem; 
-}
-.modal-close:hover {
-    color: var(--text-color);
-}
-
-.modal-body-style { /* This is where subtopic entries will go */
-    padding: 1.5rem 2rem;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--text-color);
-    overflow-y: auto; /* ADDED: Make this specific part scrollable */
-    flex-grow: 1; /* ADDED: Allow body to take available space */
-}
-/* Custom Scrollbar for Webkit browsers in modal body */
-.modal-body-style::-webkit-scrollbar {
-    width: 8px;
-}
-.modal-body-style::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-bg);
-    border-radius: 4px;
-}
-.modal-body-style::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb-bg);
-    border-radius: 4px;
-}
-.modal-body-style::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
-}
-
-/* New style for images within the modal body */
-.modal-body-style img {
-    max-width: 100%; /* Make the image responsive */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Ensures it takes its own line and margin works */
-    margin: 1rem auto; /* Centers the image and adds vertical spacing */
-}
-
-
-.modal-subtopic-entry {
-    margin-bottom: 2rem; /* Space between subtopic entries */
-}
-.modal-subtopic-entry:last-child {
-    margin-bottom: 0.5rem; /* Less space after the very last item */
-}
-.modal-subtopic-name {
-    font-size: 1.35rem; /* Slightly larger subtopic name */
-    font-weight: 600;
-    color: var(--accent-text-color);
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-.modal-subtopic-details-text { /* New class for the paragraph */
-    font-size: 1rem;
-    line-height: 1.7; /* More line spacing for readability */
-    color: var(--text-color);
-}
-
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 200; opacity: 0; transition: opacity 0.3s ease-in-out; padding: 1rem; }
+.modal-overlay:not(.hidden) { opacity: 1; }
+.modal-content { background-color: var(--card-bg); padding: 0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); width: 90%; max-width: 950px; max-height: 85vh; display: flex; flex-direction: column; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
+.modal-overlay:not(.hidden) .modal-content { transform: scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+.modal-title-style { font-size: 1.75rem; font-weight: 600; color: var(--accent-text-color); margin-bottom: 0; }
+.modal-close { background: none; border: none; font-size: 2rem; font-weight: bold; color: var(--subtle-text); cursor: pointer; line-height: 1; padding: 0.25rem; }
+.modal-close:hover { color: var(--text-color); }
+.modal-body-style { padding: 1.5rem 2rem; font-size: 1rem; line-height: 1.6; color: var(--text-color); overflow-y: auto; flex-grow: 1; }
+.modal-body-style::-webkit-scrollbar { width: 8px; }
+.modal-body-style::-webkit-scrollbar-track { background: var(--scrollbar-track-bg); border-radius: 4px; }
+.modal-body-style::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb-bg); border-radius: 4px; }
+.modal-body-style::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+.modal-body-style img { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
+.modal-subtopic-entry { margin-bottom: 2rem; }
+.modal-subtopic-entry:last-child { margin-bottom: 0.5rem; }
+.modal-subtopic-name { font-size: 1.35rem; font-weight: 600; color: var(--accent-text-color); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+.modal-subtopic-details-text { font-size: 1rem; line-height: 1.7; color: var(--text-color); }
 
 /* --- QUICK REVISION PAGE STYLES --- */
-.revision-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.revision-header .back-btn {
-    /* Uses .back-btn styles defined above */
-}
-
-.revision-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent-text-color);
-    flex-grow: 1; /* Allows title to take up remaining space */
-    text-align: center; /* Center the title */
-}
-
-.revision-content {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-    padding: 2rem;
-}
-
-.revision-topic-group {
-    margin-bottom: 2rem;
-}
-
-.revision-topic-group h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--accent-color);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-.revision-subtopics-list {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.revision-subtopic-item {
-    background-color: var(--input-bg); /* Lighter background for subtopic items */
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-html.dark-mode .revision-subtopic-item {
-    background-color: rgba(255,255,255,0.05); /* Darker background for dark mode */
-}
-
-.revision-subtopic-item h4 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--accent-text-color);
-    margin-bottom: 0.75rem;
-}
-
-.revision-subtopic-details {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-color);
-}
-
-.revision-subtopic-details p {
-    margin-bottom: 0.75rem; /* Space between paragraphs */
-}
-
-.revision-subtopic-details img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 1rem auto;
-    border-radius: 8px; /* Slightly rounded corners for images in revision */
-}
-
+.revision-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+.revision-title { font-size: 2rem; font-weight: 700; color: var(--accent-text-color); flex-grow: 1; text-align: center; }
+.revision-content { background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); padding: 2rem; }
+.revision-topic-group { margin-bottom: 2rem; }
+.revision-topic-group h3 { font-size: 1.5rem; font-weight: 600; color: var(--accent-color); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color); }
+.revision-subtopics-list { display: grid; gap: 1.5rem; }
+.revision-subtopic-item { background-color: var(--input-bg); padding: 1rem 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+html.dark-mode .revision-subtopic-item { background-color: rgba(255,255,255,0.05); }
+.revision-subtopic-item h4 { font-size: 1.15rem; font-weight: 600; color: var(--accent-text-color); margin-bottom: 0.75rem; }
+.revision-subtopic-details { font-size: 0.95rem; line-height: 1.6; color: var(--text-color); }
+.revision-subtopic-details p { margin-bottom: 0.75rem; }
+.revision-subtopic-details img { max-width: 100%; height: auto; display: block; margin: 1rem auto; border-radius: 8px; }
 
 /* Footer Styling */
 .site-footer-bottom { text-align: center; padding: 2rem 1rem; font-size: 0.9rem; color: var(--subtle-text); border-top: 1px solid var(--border-color); margin-top: 2rem; }

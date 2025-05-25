@@ -74,9 +74,17 @@ const UIManager = (() => {
             const circumference = 2 * Math.PI * 40; 
             const offset = circumference - (progress.percentage / 100) * circumference;
 
+            // Updated cardHTML with new bulb icon and moved button
             const cardHTML = `
                 <a href="#" class="subject-card-link" data-subject-id="${subject.id}" aria-label="View details for ${subject.name}">
                     <article class="subject-card">
+                        <button class="card-action-icon-btn mindmap-card-btn bulb-btn" title="Open Mind Map for ${subject.name}" data-subject-id="${subject.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M9 18h6" stroke="currentColor" fill="none"/>
+                              <path d="M10 22h4" stroke="currentColor" fill="none"/>
+                              <path d="M12.874 14.48a5 5 0 0 1-1.748 0A5.002 5.002 0 0 1 8 9.33V5a4 4 0 0 1 8 0v4.33a5.002 5.002 0 0 1-3.126 5.15z" fill="currentColor" stroke="currentColor"/>
+                            </svg>
+                        </button>
                         <div class="card-main">
                             <div class="card-info">
                                 <div class="card-title-group">
@@ -84,7 +92,7 @@ const UIManager = (() => {
                                     <h2 class="card-title">${subject.name}</h2>
                                 </div>
                                 <p class="card-description">${subject.description}</p>
-                            </div>
+                                </div>
                             <div class="progress-circle" title="${progress.completedCount} of ${progress.totalCount} subtopics completed">
                                 <svg class="progress-circle-svg" width="70" height="70" viewBox="0 0 100 100">
                                     <circle class="progress-circle-bg" cx="50" cy="50" r="40"></circle>
