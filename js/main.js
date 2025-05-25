@@ -1,10 +1,39 @@
 // js/main.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // --- FIREBASE SETUP ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyByfTCA3Gn18TrWubL--7mCrGjeDPeExLs",
+      authDomain: "placement-preparation-website.firebaseapp.com",
+      databaseURL: "https://placement-preparation-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "placement-preparation-website",
+      storageBucket: "placement-preparation-website.firebasestorage.app",
+      messagingSenderId: "667068078157",
+      appId: "1:667068078157:web:f5614c76afa7e489c52404",
+      measurementId: "G-1ECX1T9QHY"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // --- AUTH STATE OBSERVER ---
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            // User is signed out, redirect to login page.
+            console.log("User is not signed in. Redirecting to login...");
+            window.location.href = "login.html";
+        } else {
+            // User is signed in.
+            console.log("User is signed in:", user.email);
+        }
+    });
+
     // --- DOM ELEMENTS ---
     const searchInput = document.getElementById('search-input');
     const mainContainer = document.querySelector('main.container');
     const siteHeaderWrapper = document.querySelector('.site-header-wrapper');
+    const logoutBtn = document.getElementById('logout-btn');
 
     // --- INITIALIZATION ---
     ThemeManager.init();
@@ -19,6 +48,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- EVENT LISTENERS ---
+
+    // Logout Button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).catch((error) => {
+                console.error('Sign out error', error);
+                alert("Error signing out. Please try again.");
+            });
+        });
+    }
 
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
