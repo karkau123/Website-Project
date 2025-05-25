@@ -85,6 +85,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const subjectId = cardLink.dataset.subjectId;
                 const subject = DataManager.getSubjectById(subjectId);
                 if (subject) {
+                    // 💡 For debugging: This will print the exact subject name to the browser console (F12)
+                    console.log("Clicked subject name:", subject.name);
+
+                    // UPDATED: Expanded list of names to check for "Coming Soon" subjects
+                    const comingSoonSubjects = [
+                        'system design',  
+                        'database management system',  
+                        'data structures & algorithms' // Kept original
+                    ];
+
+                    if (comingSoonSubjects.includes(subject.name.toLowerCase())) {
+                        window.location.href = 'styles/coming_soon.html'; // Redirect to coming soon page
+                        return; // Stop further execution
+                    }
+                    
+                    // Original logic for other subjects
                     UIManager.renderSubjectDetailPage(subject);
                     if (siteHeaderWrapper) siteHeaderWrapper.classList.add('hidden');
                 }

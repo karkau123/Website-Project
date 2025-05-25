@@ -1,6 +1,6 @@
 {
     "id": "dbms",
-    "name": "Database Management Systems",
+    "name": "Database Management System",
     "icon": "<svg class=\"card-icon\" style=\"color: #10b981;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"></ellipse><path d=\"M3 5v14c0 1.657 4.03 3 9 3s9-1.343 9-3V5\"></path><path d=\"M3 12c0 1.657 4.03 3 9 3s9-1.343 9-3\"></path></svg>",
     "description": "Fundamentals and advanced concepts of database systems, including relational models, SQL, indexing, transactions, normalization, and more.",
     "topics": [
