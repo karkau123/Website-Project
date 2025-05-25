@@ -1,0 +1,73 @@
+{
+    "id": "os",
+    "name": "Operating Systems",
+    "icon": "<svg class=\"card-icon\" style=\"color: #38bdf8;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" rx=\"2.18\" ry=\"2.18\"></rect><line x1=\"7\" y1=\"2\" x2=\"7\" y2=\"22\"></line><line x1=\"17\" y1=\"2\" x2=\"17\" y2=\"22\"></line><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"></line><line x1=\"2\" y1=\"7\" x2=\"7\" y2=\"7\"></line><line x1=\"2\" y1=\"17\" x2=\"7\" y2=\"17\"></line><line x1=\"17\" y1=\"17\" x2=\"22\" y2=\"17\"></line><line x1=\"17\" y1=\"7\" x2=\"22\" y2=\"7\"></line></svg>",
+    "description": "Fundamental concepts of operating systems, process management, memory management, and concurrency.",
+    "topics": [
+        {
+            "name": "Introduction to OS",
+            "subtopics": [
+                {
+                    "name": "What is an Operating System?",
+                    "completed": false,
+                    "details": "<p>An operating system (OS) is system software that manages computer hardware and software resources, and provides common services for computer programs.</p><img src='images/OS.png' alt='Operating System Diagram' style='max-width: 100%; height: auto; display: block; margin: 1rem auto;'><p>It acts as an intermediary between the user and the computer hardware, making the computer system convenient to use and efficient. The primary objectives of an OS are to make the computer system convenient to use, to use computer hardware in an efficient manner, and to provide an environment in which users can easily interface with the computer. It controls and coordinates the use of the hardware among the various application programs for the various users. We can view an operating system as a resource allocator. A computer system has many resources that may be required to solve a problem: CPU time, memory space, file-storage space, I/O devices, and so on. The operating system acts as the manager of these resources. Facing numerous and possibly conflicting requests for resources, the operating system must decide how to allocate them to specific programs and users so that it can operate the computer system efficiently and fairly.</p>"
+                },
+                {
+                    "name": "Types of Operating Systems",
+                    "completed": false,
+                    "details": "There are several types of operating systems, each designed for specific purposes and environments. \n1. Batch OS: Processes are bundled together in a 'batch' and processed sequentially. Users do not interact directly with the system. \n2. Time-Sharing (or Multitasking) OS: Allows multiple users to share the computer simultaneously. The CPU's time is shared among multiple processes, giving an illusion of parallel execution. \n3. Real-Time OS (RTOS): Used in systems where time constraints are critical, such as industrial control systems or medical devices. RTOS guarantees that tasks complete within specific deadlines. There are hard real-time systems and soft real-time systems. \n4. Distributed OS: Manages a group of independent computers and makes them appear to be a single computer. Users can access resources from any machine in the network. \n5. Network OS: Runs on a server and provides the server the capability to manage data, users, groups, security, applications, and other networking functions. \n6. Mobile OS: Designed specifically for mobile devices like smartphones and tablets. Examples include Android and iOS. They are optimized for touch interfaces and low-power consumption."
+                },
+                {
+                    "name": "Functions and Services of OS",
+                    "completed": false,
+                    "details": "Operating systems provide several key functions and services: \n- Process Management: Creating, deleting, suspending, and resuming processes. \n- Memory Management: Allocating and deallocating memory space as required. \n- File System Management: Organizing files and directories, and controlling access to them. \n- I/O Device Management: Managing communication with hardware devices. \n- Security and Protection: Ensuring that resources are accessed only by authorized users and processes. \n- Networking: Enabling communication between computers. \n- User Interface: Providing a way for users to interact with the system (e.g., command-line interface, graphical user interface). \n- Error Detection and Handling: Detecting and responding to errors in hardware or software."
+                },
+                {
+                    "name": "System Calls and APIs",
+                    "completed": false,
+                    "details": "System calls provide the interface between a process and the operating system. They are typically written in assembly language or C. When a process needs a service from the OS (e.g., reading a file, creating a new process), it executes a system call. This causes a trap to a specific location in the interrupt vector, and the OS takes over. An Application Programming Interface (API) is a higher-level set of functions that often wrap these system calls, making them easier for application programmers to use. Common APIs include Win32 API for Windows, POSIX API for UNIX-based systems, and Java API for Java virtual machine."
+                },
+                {
+                    "name": "Monolithic vs Microkernel Architecture",
+                    "completed": false,
+                    "details": "Monolithic kernels have all OS services running in kernel space. This can lead to better performance as communication between modules is fast. However, a bug in one module can crash the entire system, and it's harder to extend. Examples include traditional UNIX and Linux. \nMicrokernels, on the other hand, have only essential services (like IPC and basic scheduling) in the kernel space. Other services (like file systems, device drivers) run as user-level server processes. This provides better modularity, security, and reliability, but can have performance overhead due to increased IPC. Examples include Mach and QNX."
+                }
+            ]
+        },
+        {
+            "name": "Process Management",
+            "subtopics": [
+                {
+                    "name": "Processes and Process States",
+                    "completed": false,
+                    "details": "A process is a program in execution. As a process executes, it changes state. The state of a process is defined in part by the current activity of that process. Each process may be in one ofthe following states: \n- New: The process is being created. \n- Ready: The process is waiting to be assigned to a processor. \n- Running: Instructions are being executed. \n- Waiting: The process is waiting for some event to occur (such as an I/O completion or reception of a signal). \n- Terminated: The process has finished execution. It's important to note that only one process can be running on any processor at any instant, though many processes may be ready and waiting."
+                },
+                {
+                    "name": "Process Control Block (PCB)",
+                    "completed": false,
+                    "details": "Each process is represented in the operating system by a process control block (PCB)—also called a task control block. A PCB contains many pieces of information associated with a specific process, including: \n- Process state: The current state of the process (e.g., new, ready, running, waiting, terminated). \n- Program counter: Indicates the address of the next instruction to be executed for this process. \n- CPU registers: Vary in number and type, depending on the computer architecture. They include accumulators, index registers, stack pointers, and general-purpose registers, plus any condition-code information. \n- CPU-scheduling information: Includes a process priority, pointers to scheduling queues, and any other scheduling parameters. \n- Memory-management information: May include such information as the value of the base and limit registers, the page tables, or the segment tables, depending on the memory system used by the operating system. \n- Accounting information: Includes the amount of CPU and real time used, time limits, account numbers, job or process numbers, and so on. \n- I/O status information: Includes the list of I/O devices allocated to the process, a list of open files, and so on."
+                },
+                {
+                    "name": "Context Switching",
+                    "completed": false,
+                    "details": "Switching the CPU to another process requires performing a state save of the current process and a state restore of a different process. This task is known as a context switch. Context-switch time is pure overhead, because the system does no useful work while switching. Its speed varies from machine to machine, depending on the memory speed, the number of registers that must be copied, and the existence of special instructions (such as a single instruction to load or store all registers). Context-switch times are highly dependent on hardware support. For instance, some processors provide multiple sets of registers. A context switch here simply requires changing the pointer to the current register set."
+                }
+            ]
+        },
+        {
+            "name": "CPU Scheduling",
+            "subtopics": [
+                {
+                    "name": "Scheduling Criteria & Metrics",
+                    "completed": false,
+                    "details": "Different CPU-scheduling algorithms have different properties, and the choice of a particular algorithm may favor one class of processes over another. Many criteria have been suggested for comparing CPU-scheduling algorithms. Which characteristics are used for comparison can make a substantial difference in which algorithm is judged to be best. Criteria include: \n- CPU utilization: Keep the CPU as busy as possible. \n- Throughput: The number of processes that are completed per time unit. \n- Turnaround time: The interval from the time of submission of a process to the time of completion. \n- Waiting time: The sum of the periods spent waiting in the ready queue. \n- Response time: The time from the submission of a request until the first response is produced (for time-sharing environment)."
+                },
+                {
+                    "name": "Preemptive vs Non-Preemptive Scheduling",
+                    "completed": false,
+                    "details": "CPU scheduling decisions may take place under the following four circumstances: \n1. When a process switches from the running state to the waiting state. \n2. When a process switches from the running state to the ready state. \n3. When a process switches from the waiting state to the ready state. \n4. When a process terminates. \nFor situations 1 and 4, there is no choice in terms of scheduling. A new process (if one exists in the ready queue) must be selected for execution. There is a choice, however, for situations 2 and 3. When scheduling takes place only under circumstances 1 and 4, we say that the scheduling scheme is non-preemptive or cooperative. Otherwise, it is preemptive. Non-preemptive scheduling means that once the CPU has been allocated to a process, the process keeps the CPU until it releases the CPU either by terminating or by switching to the waiting state. Preemptive scheduling can result in race conditions when data are shared among several processes. This means that the OS may interrupt a running process and allocate the CPU to another process."
+                }
+            ]
+        }
+    ]
+}

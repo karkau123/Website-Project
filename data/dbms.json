@@ -1,0 +1,120 @@
+{
+    "id": "dbms",
+    "name": "Database Management Systems",
+    "icon": "<svg class=\"card-icon\" style=\"color: #10b981;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"></ellipse><path d=\"M3 5v14c0 1.657 4.03 3 9 3s9-1.343 9-3V5\"></path><path d=\"M3 12c0 1.657 4.03 3 9 3s9-1.343 9-3\"></path></svg>",
+    "description": "Fundamentals and advanced concepts of database systems, including relational models, SQL, indexing, transactions, normalization, and more.",
+    "topics": [
+      {
+        "name": "Introduction to DBMS",
+        "subtopics": [
+          { "name": "What is DBMS", "completed": false },
+          { "name": "Database vs File System", "completed": false },
+          { "name": "DBMS Applications", "completed": false },
+          { "name": "3-Level Architecture (ANSI/SPARC)", "completed": false },
+          { "name": "DBMS Users", "completed": false },
+          { "name": "Data Models", "completed": false },
+          { "name": "Database Languages (DDL, DML, DCL)", "completed": false }
+        ]
+      },
+      {
+        "name": "Entity-Relationship Model",
+        "subtopics": [
+          { "name": "Entity, Attributes, and Relationships", "completed": false },
+          { "name": "ER Diagrams and Notations", "completed": false },
+          { "name": "Keys: Primary, Candidate, Foreign", "completed": false },
+          { "name": "Weak Entities and Aggregation", "completed": false },
+          { "name": "Mapping ER Model to Relational Model", "completed": false }
+        ]
+      },
+      {
+        "name": "Relational Model",
+        "subtopics": [
+          { "name": "Relational Algebra (Selection, Projection, etc.)", "completed": false },
+          { "name": "Relational Calculus (Tuple and Domain)", "completed": false },
+          { "name": "Keys and Integrity Constraints", "completed": false },
+          { "name": "Schema Diagrams", "completed": false }
+        ]
+      },
+      {
+        "name": "Structured Query Language (SQL)",
+        "subtopics": [
+          { "name": "Basic SQL Queries (SELECT, WHERE, JOIN)", "completed": false },
+          { "name": "GROUP BY, HAVING, ORDER BY", "completed": false },
+          { "name": "Subqueries and Nested Queries", "completed": false },
+          { "name": "DDL and DML Statements", "completed": false },
+          { "name": "Views and Indexes", "completed": false },
+          { "name": "Stored Procedures and Triggers", "completed": false },
+          { "name": "Constraints and Assertions", "completed": false }
+        ]
+      },
+      {
+        "name": "Normalization",
+        "subtopics": [
+          { "name": "Functional Dependencies", "completed": false },
+          { "name": "1NF, 2NF, 3NF, BCNF", "completed": false },
+          { "name": "Multivalued and Join Dependencies", "completed": false },
+          { "name": "4NF, 5NF", "completed": false },
+          { "name": "Decomposition and Lossless Join", "completed": false }
+        ]
+      },
+      {
+        "name": "Indexing and File Organization",
+        "subtopics": [
+          { "name": "File Organization (Heap, Sequential, Hash)", "completed": false },
+          { "name": "Indexing (Single-Level, Multi-Level)", "completed": false },
+          { "name": "B-Trees and B+ Trees", "completed": false },
+          { "name": "Hashing (Static and Dynamic)", "completed": false }
+        ]
+      },
+      {
+        "name": "Transaction Management",
+        "subtopics": [
+          { "name": "ACID Properties", "completed": false },
+          { "name": "Transaction States", "completed": false },
+          { "name": "Serializability and Schedules", "completed": false },
+          { "name": "Conflict and View Serializability", "completed": false },
+          { "name": "Recoverability and Cascading Rollback", "completed": false }
+        ]
+      },
+      {
+        "name": "Concurrency Control",
+        "subtopics": [
+          { "name": "Lock-Based Protocols", "completed": false },
+          { "name": "Timestamp-Based Protocols", "completed": false },
+          { "name": "Deadlocks in DBMS", "completed": false },
+          { "name": "Two-Phase Locking Protocol", "completed": false },
+          { "name": "Multiversion Concurrency Control", "completed": false }
+        ]
+      },
+      {
+        "name": "Recovery Systems",
+        "subtopics": [
+          { "name": "Failure Classification", "completed": false },
+          { "name": "Log-Based Recovery", "completed": false },
+          { "name": "Checkpoints", "completed": false },
+          { "name": "Shadow Paging", "completed": false },
+          { "name": "ARIES Algorithm", "completed": false }
+        ]
+      },
+      {
+        "name": "Distributed Databases",
+        "subtopics": [
+          { "name": "Types of Distributed Databases", "completed": false },
+          { "name": "Data Fragmentation, Replication, Allocation", "completed": false },
+          { "name": "Distributed Query Processing", "completed": false },
+          { "name": "CAP Theorem and Consistency Models", "completed": false }
+        ]
+      },
+      {
+        "name": "NoSQL and New Trends",
+        "subtopics": [
+          { "name": "Overview of NoSQL Databases", "completed": false },
+          { "name": "Types: Key-Value, Document, Column, Graph", "completed": false },
+          { "name": "MongoDB Basics", "completed": false },
+          { "name": "Comparing SQL vs NoSQL", "completed": false },
+          { "name": "Big Data and DBMS", "completed": false }
+        ]
+      }
+    ]
+  }
+  

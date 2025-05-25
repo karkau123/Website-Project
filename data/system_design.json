@@ -1,0 +1,79 @@
+{
+    "id": "system-design",
+    "name": "System Design",
+    "icon": "<svg class=\"card-icon\" style=\"color: #f97316;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 3v6\"></path><path d=\"M6 15v6\"></path><path d=\"M18 3v6\"></path><path d=\"M18 15v6\"></path><path d=\"M3 6h6\"></path><path d=\"M15 6h6\"></path><path d=\"M3 18h6\"></path><path d=\"M15 18h6\"></path></svg>",
+    "description": "Covers scalable systems, load balancing, caching, databases, messaging queues, consistency, and fault tolerance in modern backend architectures.",
+    "topics": [
+      {
+        "name": "System Design Basics",
+        "subtopics": [
+          { "name": "Functional vs Non-Functional Requirements", "completed": false },
+          { "name": "High-Level Design vs Low-Level Design", "completed": false },
+          { "name": "Latency vs Throughput", "completed": false },
+          { "name": "CAP Theorem", "completed": false }
+        ]
+      },
+      {
+        "name": "Scalability & Load Handling",
+        "subtopics": [
+          { "name": "Horizontal vs Vertical Scaling", "completed": false },
+          { "name": "Load Balancers", "completed": false },
+          { "name": "CDNs and Edge Caching", "completed": false }
+        ]
+      },
+      {
+        "name": "Databases in System Design",
+        "subtopics": [
+          { "name": "SQL vs NoSQL", "completed": false },
+          { "name": "Sharding & Partitioning", "completed": false },
+          { "name": "Replication", "completed": false },
+          { "name": "Consistency & Availability", "completed": false }
+        ]
+      },
+      {
+        "name": "Caching",
+        "subtopics": [
+          { "name": "Cache Invalidation Strategies", "completed": false },
+          { "name": "Write-Through vs Write-Back", "completed": false },
+          { "name": "Redis & Memcached", "completed": false }
+        ]
+      },
+      {
+        "name": "Asynchronous Systems",
+        "subtopics": [
+          { "name": "Message Queues (Kafka, RabbitMQ)", "completed": false },
+          { "name": "Event-Driven Architecture", "completed": false },
+          { "name": "Pub/Sub Models", "completed": false }
+        ]
+      },
+      {
+        "name": "Design Components",
+        "subtopics": [
+          { "name": "APIs and Rate Limiting", "completed": false },
+          { "name": "Authentication (OAuth, JWT)", "completed": false },
+          { "name": "File Storage (S3, CDN)", "completed": false },
+          { "name": "Monitoring & Logging", "completed": false }
+        ]
+      },
+      {
+        "name": "Common System Design Scenarios",
+        "subtopics": [
+          { "name": "Design a URL Shortener", "completed": false },
+          { "name": "Design Twitter/Instagram", "completed": false },
+          { "name": "Design a Notification System", "completed": false },
+          { "name": "Design a Chat Application", "completed": false },
+          { "name": "Design YouTube/Netflix", "completed": false }
+        ]
+      },
+      {
+        "name": "Fault Tolerance and Reliability",
+        "subtopics": [
+          { "name": "Failover and Redundancy", "completed": false },
+          { "name": "Leader Election", "completed": false },
+          { "name": "Heartbeats & Health Checks", "completed": false },
+          { "name": "Circuit Breakers", "completed": false }
+        ]
+      }
+    ]
+  }
+  

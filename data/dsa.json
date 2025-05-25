@@ -1,0 +1,106 @@
+{
+    "id": "dsa",
+    "name": "Data Structures & Algorithms",
+    "icon": "<svg class=\"card-icon\" style=\"color: #6366f1;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 6v6l4 2\"></path></svg>",
+    "description": "Complete guide to fundamental and advanced data structures and algorithms, including problem-solving and complexity analysis.",
+    "topics": [
+      {
+        "name": "Foundations",
+        "subtopics": [
+          { "name": "Time and Space Complexity", "completed": false },
+          { "name": "Big-O, Big-Θ, Big-Ω Notation", "completed": false },
+          { "name": "Recursion and Backtracking", "completed": false }
+        ]
+      },
+      {
+        "name": "Arrays & Strings",
+        "subtopics": [
+          { "name": "1D and 2D Arrays", "completed": false },
+          { "name": "Sliding Window Technique", "completed": false },
+          { "name": "Two Pointers Technique", "completed": false },
+          { "name": "String Manipulation & Pattern Matching", "completed": false }
+        ]
+      },
+      {
+        "name": "Linked Lists",
+        "subtopics": [
+          { "name": "Singly & Doubly Linked Lists", "completed": false },
+          { "name": "Cycle Detection", "completed": false },
+          { "name": "Operations: Insert, Delete, Reverse", "completed": false }
+        ]
+      },
+      {
+        "name": "Stacks & Queues",
+        "subtopics": [
+          { "name": "Stack Applications (Parentheses, Infix/Postfix)", "completed": false },
+          { "name": "Queue and Circular Queue", "completed": false },
+          { "name": "Deque", "completed": false },
+          { "name": "Monotonic Stack/Queue", "completed": false }
+        ]
+      },
+      {
+        "name": "Trees",
+        "subtopics": [
+          { "name": "Binary Trees and Binary Search Trees", "completed": false },
+          { "name": "Tree Traversals (Inorder, Preorder, Postorder)", "completed": false },
+          { "name": "Balanced Trees (AVL, Red-Black)", "completed": false },
+          { "name": "Segment Trees, Fenwick Trees", "completed": false },
+          { "name": "Trie", "completed": false }
+        ]
+      },
+      {
+        "name": "Heaps and Priority Queues",
+        "subtopics": [
+          { "name": "Min Heap and Max Heap", "completed": false },
+          { "name": "Heap Sort", "completed": false },
+          { "name": "Priority Queue Operations", "completed": false }
+        ]
+      },
+      {
+        "name": "Hashing",
+        "subtopics": [
+          { "name": "Hash Tables and Hash Maps", "completed": false },
+          { "name": "Collision Handling", "completed": false },
+          { "name": "Applications of Hashing", "completed": false }
+        ]
+      },
+      {
+        "name": "Graphs",
+        "subtopics": [
+          { "name": "Graph Representations", "completed": false },
+          { "name": "BFS and DFS", "completed": false },
+          { "name": "Topological Sort", "completed": false },
+          { "name": "Dijkstra, Bellman-Ford, Floyd-Warshall", "completed": false },
+          { "name": "Minimum Spanning Tree (Kruskal, Prim)", "completed": false },
+          { "name": "Union-Find / Disjoint Sets", "completed": false }
+        ]
+      },
+      {
+        "name": "Greedy & Dynamic Programming",
+        "subtopics": [
+          { "name": "Greedy Strategy", "completed": false },
+          { "name": "Memoization vs Tabulation", "completed": false },
+          { "name": "Classic Problems: Knapsack, LIS, LCS", "completed": false },
+          { "name": "Matrix Chain Multiplication", "completed": false }
+        ]
+      },
+      {
+        "name": "Divide & Conquer",
+        "subtopics": [
+          { "name": "Binary Search", "completed": false },
+          { "name": "Merge Sort", "completed": false },
+          { "name": "Quick Sort", "completed": false },
+          { "name": "Closest Pair Problem", "completed": false }
+        ]
+      },
+      {
+        "name": "Bit Manipulation",
+        "subtopics": [
+          { "name": "Basic Bitwise Operations", "completed": false },
+          { "name": "Check Power of Two", "completed": false },
+          { "name": "Count Set Bits", "completed": false }
+        ]
+      }
+    ]
+  }
+  
