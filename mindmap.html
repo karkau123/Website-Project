@@ -4,111 +4,582 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Subject Mind Map</title>
-        <link rel="stylesheet" href="style.css">
+        <title>Operating Systems Quick Revision Mind Map</title>
         <style>
+            :root {
+                --bg-color: #1a1a1a;
+                --node-bg-color: #2c2c2c;
+                --node-border-color: #555;
+                --text-color: #e0e0e0;
+                --accent-color: #00aaff;
+                --line-color: #555;
+                --level-1-color: #ff8c42;
+                --level-2-color: #ffdd57;
+                --level-3-color: #a0e8af;
+                --level-4-color: #74b9ff;
+                --level-5-color: #d6a2e8;
+            }
+
             body {
-                font-family: 'Inter', sans-serif;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: var(--bg-color);
+                color: var(--text-color);
                 margin: 0;
-                background-color: var(--bg-color, #f4f4f5);
-                /* Use CSS var from style.css or fallback */
-                color: var(--text-color, #18181b);
                 padding: 2rem;
-                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                min-height: 100vh;
             }
 
             .mindmap-container {
-                background-color: var(--card-bg, #ffffff);
-                padding: 2rem 3rem;
-                border-radius: 12px;
-                box-shadow: var(--shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.05));
-                border: 1px solid var(--border-color, #e4e4e7);
+                width: 100%;
+                max-width: 1600px;
+                text-align: center;
             }
 
-            h1 {
-                color: var(--accent-text-color, #18181b);
-                margin-bottom: 1rem;
+            .mindmap {
+                display: inline-block;
+                text-align: left;
             }
 
-            p {
-                font-size: 1.1rem;
-                color: var(--subtle-text, #71717a);
+            .mindmap ul {
+                padding-left: 50px;
+                margin: 0;
+                position: relative;
             }
 
-            /* Basic dark mode check if your main style.css handles it via html.dark-mode */
-            html.dark-mode body {
-                --bg-color: #121212;
-                --text-color: #e2e8f0;
-                --card-bg: #1e1e1e;
-                --border-color: #2f2f2f;
-                --accent-text-color: #ffffff;
-                --subtle-text: #a1a1aa;
+            .mindmap li {
+                list-style-type: none;
+                position: relative;
+                padding: 10px 0 10px 40px;
+            }
+
+            /* Connecting Lines */
+            .mindmap li::before,
+            .mindmap li::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                border-color: var(--line-color);
+            }
+
+            /* Horizontal line from node */
+            .mindmap li::before {
+                border-top: 2px solid var(--line-color);
+                top: 25px;
+                width: 40px;
+                height: 0;
+            }
+
+            /* Vertical line connecting siblings */
+            .mindmap li::after {
+                border-left: 2px solid var(--line-color);
+                height: 100%;
+                width: 0px;
+                top: 0;
+            }
+
+            /* Remove vertical line from the last child */
+            .mindmap li:last-child::after {
+                display: none;
+            }
+
+            /* Root node styling */
+            .mindmap>.root {
+                padding: 0;
+                margin-bottom: 20px;
+            }
+
+            .mindmap>.root>span {
+                font-size: 2em;
+                background-color: var(--accent-color);
+                color: #111;
+                border-color: var(--accent-color);
+                padding: 15px 25px;
+            }
+
+            .mindmap>.root::before,
+            .mindmap>.root::after {
+                display: none;
+                /* No lines for the root */
+            }
+
+            .mindmap>.root>ul {
+                padding-left: 0;
+            }
+
+            /* Node Styling */
+            .mindmap span {
+                display: inline-block;
+                padding: 8px 15px;
+                background-color: var(--node-bg-color);
+                border: 2px solid var(--node-border-color);
+                border-radius: 8px;
+                min-width: 150px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                position: relative;
+                /* For the toggle icon */
+            }
+
+            .mindmap span:hover,
+            .mindmap span:focus {
+                background-color: #3a3a3a;
+                border-color: var(--accent-color);
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+            }
+
+            /* Level-based coloring */
+            .level-1>span {
+                border-color: var(--level-1-color);
+            }
+
+            .level-2>span {
+                border-color: var(--level-2-color);
+            }
+
+            .level-3>span {
+                border-color: var(--level-3-color);
+            }
+
+            .level-4>span {
+                border-color: var(--level-4-color);
+            }
+
+            .level-5>span {
+                border-color: var(--level-5-color);
+            }
+
+            /* Description/Detail Styling */
+            .mindmap .details {
+                font-size: 0.85em;
+                color: #aaa;
+                display: block;
+                margin-top: 5px;
+                font-style: italic;
+            }
+
+            /* Toggle Functionality */
+            .mindmap .collapsible {
+                display: block;
+                /* Initially visible */
+            }
+
+            .mindmap .collapsed>.collapsible {
+                display: none;
+                /* Hide children when collapsed */
+            }
+
+            .mindmap .toggle {
+                position: absolute;
+                top: 50%;
+                right: -25px;
+                transform: translateY(-50%);
+                width: 18px;
+                height: 18px;
+                background-color: #444;
+                color: var(--text-color);
+                border-radius: 50%;
+                text-align: center;
+                line-height: 18px;
+                font-weight: bold;
+                font-family: monospace;
+                z-index: 10;
+            }
+
+            .mindmap .collapsed>span>.toggle::after {
+                content: '+';
+            }
+
+            .mindmap li:not(.collapsed)>span>.toggle::after {
+                content: '-';
+            }
+
+            .mindmap li:not(:has(ul))>span>.toggle {
+                display: none;
+                /* Hide toggle if no children */
             }
         </style>
     </head>
 
     <body>
+
         <div class="mindmap-container">
-            <h1 id="mindmap-title">Mind Map</h1>
-            <p id="mindmap-subject-info">Loading subject information...</p>
-            <div id="mindmap-content">
-                <p><em>Mind map content for the selected subject will be displayed here.</em></p>
+            <h1>Operating Systems Revision Mind Map</h1>
+            <p>Click on any node to expand or collapse its children.</p>
+            <div class="mindmap">
+                <ul>
+                    <li class="root">
+                        <span>🧠 Operating Systems</span>
+                        <ul class="collapsible">
+                            <li class="level-1">
+                                <span>1. Introduction to OS</span>
+                                <ul class="collapsible">
+                                    <li class="level-2">
+                                        <span>Definition & Functions</span>
+                                        <span class="details">Manages hardware, provides services for software.
+                                            Functions: Resource Mgt, Process Mgt, Memory Mgt, I/O, Security.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Types of OS</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Batch:</b> Jobs processed in groups.</span>
+                                            </li>
+                                            <li class="level-3"><span><b>Time-Sharing:</b> CPU time is shared among
+                                                    users.</span></li>
+                                            <li class="level-3"><span><b>Distributed:</b> Manages a group of independent
+                                                    computers.</span></li>
+                                            <li class="level-3"><span><b>Real-Time (RTOS):</b> Strict time constraints
+                                                    (Hard vs. Soft).</span></li>
+                                            <li class="level-3"><span><b>Embedded:</b> Specialized for a specific
+                                                    device.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>OS Structure</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Monolithic:</b> All services in kernel space.
+                                                    Fast but not robust.</span></li>
+                                            <li class="level-3"><span><b>Layered:</b> OS divided into layers, each built
+                                                    on lower ones.</span></li>
+                                            <li class="level-3"><span><b>Microkernel:</b> Minimal kernel, most services
+                                                    in user space.</span></li>
+                                            <li class="level-3"><span><b>Modular/Hybrid:</b> Core kernel + loadable
+                                                    modules (e.g., Linux, macOS).</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>System Calls & Services</span>
+                                        <span class="details">Interface for programs to request OS services. Switches
+                                            from User Mode to Kernel Mode.</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>2. Process Management</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>Process vs Program:</b> A program is passive code; a
+                                            process is a program in execution.</span></li>
+                                    <li class="level-2">
+                                        <span>Process States & PCB</span>
+                                        <span class="details">States: New, Ready, Running, Waiting, Terminated. PCB
+                                            stores process info (state, PC, registers, etc.).</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Scheduling</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Schedulers:</b> Long-term, Short-term,
+                                                    Medium-term.</span></li>
+                                            <li class="level-3"><span><b>Context Switch:</b> Saving state of one process
+                                                    and loading another.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Scheduling Algorithms</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>FCFS:</b> First-Come, First-Serve
+                                                    (Non-preemptive).</span></li>
+                                            <li class="level-3"><span><b>SJF:</b> Shortest Job First
+                                                    (Preemptive/Non-preemptive). Optimal but needs future
+                                                    prediction.</span></li>
+                                            <li class="level-3"><span><b>Priority:</b> Higher priority process runs
+                                                    first. Can lead to starvation.</span></li>
+                                            <li class="level-3"><span><b>Round Robin (RR):</b> Time-slicing (quantum).
+                                                    Good for interactive systems.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Threads</span>
+                                        <span class="details">Lightweight process. User-level (fast, no kernel support)
+                                            vs Kernel-level (slower, OS-managed).</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Synchronization</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Race Condition:</b> Outcome depends on sequence
+                                                    of execution.</span></li>
+                                            <li class="level-3"><span><b>Critical Section:</b> Code segment where shared
+                                                    resources are accessed.</span></li>
+                                            <li class="level-3">
+                                                <span>Mechanisms</span>
+                                                <ul class="collapsible">
+                                                    <li class="level-4"><span><b>Mutex:</b> Mutual Exclusion lock. Only
+                                                            one thread can own it.</span></li>
+                                                    <li class="level-4"><span><b>Semaphore:</b> Counting signal. Allows
+                                                            N threads to access.</span></li>
+                                                    <li class="level-4"><span><b>Monitor:</b> High-level construct with
+                                                            mutual exclusion and condition variables.</span></li>
+                                                    <li class="level-4"><span><b>Condition Variables:</b> Allow threads
+                                                            to wait for a condition to become true.</span></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>3. CPU Scheduling</span>
+                                <ul class="collapsible">
+                                    <li class="level-2">
+                                        <span>Criteria</span>
+                                        <span class="details">CPU utilization, Throughput, Turnaround Time, Waiting
+                                            Time, Response Time.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Preemptive vs Non-preemptive</span>
+                                        <span class="details">Preemptive can interrupt a running process; Non-preemptive
+                                            runs until completion/block.</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>4. Deadlocks</span>
+                                <ul class="collapsible">
+                                    <li class="level-2">
+                                        <span>Characterization</span>
+                                        <span class="details">Mutual Exclusion, Hold and Wait, No Preemption, Circular
+                                            Wait. All four must hold.</span>
+                                    </li>
+                                    <li class="level-2"><span><b>Resource Allocation Graph:</b> Visualizes processes and
+                                            resources. Cycle implies deadlock.</span></li>
+                                    <li class="level-2">
+                                        <span>Handling</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Prevention:</b> Negate one of the four
+                                                    conditions.</span></li>
+                                            <li class="level-3"><span><b>Avoidance:</b> Use algorithms like Banker's to
+                                                    ensure a safe state.</span></li>
+                                            <li class="level-3"><span><b>Detection & Recovery:</b> Allow deadlocks,
+                                                    detect them, then recover (e.g., terminate process).</span></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>5. Memory Management</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>Logical vs Physical Address:</b> CPU sees logical, MMU
+                                            translates to physical.</span></li>
+                                    <li class="level-2">
+                                        <span>Techniques</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Contiguous:</b> Process occupies a single
+                                                    block. Leads to external fragmentation.</span></li>
+                                            <li class="level-3"><span><b>Paging:</b> Memory divided into fixed-size
+                                                    frames, process into pages. Solves external fragmentation.</span>
+                                            </li>
+                                            <li class="level-3"><span><b>Segmentation:</b> Memory divided into logical
+                                                    segments (code, data, stack).</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Virtual Memory</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Demand Paging:</b> Load pages into memory only
+                                                    when needed.</span></li>
+                                            <li class="level-3">
+                                                <span>Page Replacement Algos</span>
+                                                <ul class="collapsible">
+                                                    <li class="level-4"><span><b>FIFO:</b> First-In, First-Out.</span>
+                                                    </li>
+                                                    <li class="level-4"><span><b>LRU:</b> Least Recently Used.</span>
+                                                    </li>
+                                                    <li class="level-4"><span><b>Optimal:</b> Replace page that won't be
+                                                            used for longest time.</span></li>
+                                                </ul>
+                                            </li>
+                                            <li class="level-3"><span><b>Thrashing:</b> High paging activity, low CPU
+                                                    utilization.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2"><span><b>TLB (Translation Lookaside Buffer):</b> A fast cache
+                                            for page table entries.</span></li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>6. File System Mgt</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>File Concepts:</b> Attributes (name, size, date),
+                                            Operations (create, read, write).</span></li>
+                                    <li class="level-2"><span><b>Access Methods:</b> Sequential, Direct, Indexed.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Directory Structure</span>
+                                        <span class="details">Single-Level, Two-Level, Tree-Structured,
+                                            Acyclic-Graph.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Allocation Methods</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Contiguous:</b> Simple, fast, but suffers from
+                                                    fragmentation.</span></li>
+                                            <li class="level-3"><span><b>Linked:</b> Blocks are scattered, linked by
+                                                    pointers. Solves fragmentation.</span></li>
+                                            <li class="level-3"><span><b>Indexed:</b> Uses an index block to store
+                                                    pointers to data blocks.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2"><span><b>Free Space Management:</b> Bit Vector, Linked List,
+                                            Grouping.</span></li>
+                                    <li class="level-2"><span><b>Journaling:</b> Logs changes before writing to ensure
+                                            consistency after a crash.</span></li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>7. I/O Systems</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>I/O Hardware:</b> Devices, Controllers, Buses.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>I/O Techniques</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Programmed I/O:</b> CPU polls device
+                                                    status.</span></li>
+                                            <li class="level-3"><span><b>Interrupt-driven I/O:</b> Device interrupts CPU
+                                                    when ready.</span></li>
+                                            <li class="level-3"><span><b>DMA (Direct Memory Access):</b> Controller
+                                                    transfers data directly to/from memory.</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Disk Scheduling</span>
+                                        <ul class="collapsible">
+                                            <li class="level-4"><span><b>FCFS, SSTF, SCAN, C-SCAN, LOOK.</b></span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>RAID Levels</span>
+                                        <span class="details">RAID 0 (Stripe), RAID 1 (Mirror), RAID 5 (Parity), RAID 10
+                                            (Stripe of Mirrors).</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>8. Storage Management</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>Secondary Storage:</b> Non-volatile memory (HDD, SSD).
+                                            Managed by file system.</span></li>
+                                    <li class="level-2">
+                                        <span>Backup Strategies</span>
+                                        <span class="details">Full, Incremental, Differential. 3-2-1 Rule (3 copies, 2
+                                            media, 1 offsite).</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>9. Security & Protection</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>Goals:</b> Confidentiality, Integrity, Availability
+                                            (CIA Triad). Principle of Least Privilege.</span></li>
+                                    <li class="level-2"><span><b>Authentication:</b> Passwords, MFA, Biometrics,
+                                            Tokens.</span></li>
+                                    <li class="level-2"><span><b>Threats:</b> Malware (Virus, Worm, Ransomware),
+                                            Phishing, DoS.</span></li>
+                                    <li class="level-2"><span><b>Mechanisms:</b> Firewalls, Antivirus, Encryption
+                                            (Symmetric & Asymmetric).</span></li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>10. System Calls & Kernel</span>
+                                <ul class="collapsible">
+                                    <li class="level-2">
+                                        <span>User vs Kernel Mode</span>
+                                        <span class="details">Dual-mode operation for protection. Kernel mode has
+                                            privileged access. Transition via system call.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Examples (Linux/Windows)</span>
+                                        <span class="details">fork()/CreateProcess, read()/ReadFile, write()/WriteFile,
+                                            open()/CreateFile.</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>11. Distributed Systems</span>
+                                <ul class="collapsible">
+                                    <li class="level-2"><span><b>Concepts:</b> Manages multiple independent CPUs. Goal
+                                            is transparency.</span></li>
+                                    <li class="level-2"><span><b>RPC (Remote Procedure Call):</b> Allows a program to
+                                            execute a procedure on another computer.</span></li>
+                                    <li class="level-2"><span><b>Distributed File Systems (DFS):</b> e.g., NFS,
+                                            GFS.</span></li>
+                                    <li class="level-2"><span><b>Clock Synchronization:</b> Lamport Timestamps, Vector
+                                            Clocks.</span></li>
+                                </ul>
+                            </li>
+                            <li class="level-1">
+                                <span>12. Virtualization & Cloud</span>
+                                <ul class="collapsible">
+                                    <li class="level-2">
+                                        <span>Virtualization</span>
+                                        <span class="details">Creates a virtual version of a resource (e.g., server,
+                                            storage).</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Hypervisors</span>
+                                        <ul class="collapsible">
+                                            <li class="level-3"><span><b>Type 1 (Bare-Metal):</b> Runs directly on host
+                                                    hardware (e.g., ESXi, KVM).</span></li>
+                                            <li class="level-3"><span><b>Type 2 (Hosted):</b> Runs on a conventional OS
+                                                    (e.g., VirtualBox).</span></li>
+                                        </ul>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Containers vs VMs</span>
+                                        <span class="details">VMs virtualize hardware. Containers virtualize the OS
+                                            (share kernel). Lighter, faster.</span>
+                                    </li>
+                                    <li class="level-2">
+                                        <span>Cloud OS</span>
+                                        <span class="details">Manages resources in a cloud environment (e.g., OpenStack,
+                                            Kubernetes for orchestration).</span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                // Function to apply dark mode if needed (simplified)
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') {
-                    document.documentElement.classList.add('dark-mode');
-                }
-
-
-                const mindMapTitle = document.getElementById('mindmap-title');
-                const subjectInfoParagraph = document.getElementById('mindmap-subject-info');
-
-                // Get the subject ID from the URL query parameter
-                const urlParams = new URLSearchParams(window.location.search);
-                const subjectId = urlParams.get('subject');
-
-                if (subjectId) {
-                    // You would typically fetch the subject name using the ID
-                    // For this placeholder, we'll just use the ID.
-                    // In a real app, you might fetch data/os.json, data/dbms.json etc.
-                    // or have a mapping from ID to name.
-                    let subjectName = subjectId.toUpperCase(); // Placeholder name
-
-                    // Simple mapping for demonstration
-                    const subjectNames = {
-                        'os': 'Operating Systems',
-                        'dbms': 'Database Management',
-                        'system-design': 'System Design',
-                        'dsa': 'Data Structures & Algorithms'
-                    };
-                    if (subjectNames[subjectId]) {
-                        subjectName = subjectNames[subjectId];
+            document.addEventListener('DOMContentLoaded', function () {
+                // Add toggle buttons to all list items that have children
+                const allItems = document.querySelectorAll('.mindmap li');
+                allItems.forEach(item => {
+                    if (item.querySelector('ul')) {
+                        const span = item.querySelector('span:first-of-type');
+                        const toggle = document.createElement('div');
+                        toggle.classList.add('toggle');
+                        span.appendChild(toggle);
                     }
+                });
 
-                    mindMapTitle.textContent = `Mind Map for ${subjectName}`;
-                    subjectInfoParagraph.textContent = `Displaying mind map for subject ID: ${subjectId}.`;
+                // Add click listener to all spans to toggle collapse
+                const allSpans = document.querySelectorAll('.mindmap span');
+                allSpans.forEach(span => {
+                    span.addEventListener('click', function (event) {
+                        // Prevent event from bubbling up to parent spans
+                        event.stopPropagation();
 
-                    // TODO: Add your mind map generation/rendering logic here
-                    // For example, using a library like Markmap, Mermaid, etc.
-                    // Or fetching specific mind map data for this subjectId.
+                        const parentLi = this.parentElement;
+                        if (parentLi.querySelector('ul')) {
+                            parentLi.classList.toggle('collapsed');
+                        }
+                    });
+                });
 
-                } else {
-                    mindMapTitle.textContent = 'Mind Map';
-                    subjectInfoParagraph.textContent = 'No subject selected. Please access this page via a subject card.';
-                    document.getElementById('mindmap-content').innerHTML = '<p><em>Please select a subject from the main page.</em></p>';
-                }
+                // Initially collapse all nodes except the first level
+                const level1Nodes = document.querySelectorAll('.mindmap > ul > .root > ul > li');
+                level1Nodes.forEach(node => {
+                    const childrenLIs = node.querySelectorAll('li');
+                    childrenLIs.forEach(child => child.classList.add('collapsed'));
+                });
             });
         </script>
+
     </body>
 
 </html>
