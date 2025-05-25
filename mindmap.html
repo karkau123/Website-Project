@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Subject Mind Map</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                background-color: var(--bg-color, #f4f4f5);
+                /* Use CSS var from style.css or fallback */
+                color: var(--text-color, #18181b);
+                padding: 2rem;
+                text-align: center;
+            }
+
+            .mindmap-container {
+                background-color: var(--card-bg, #ffffff);
+                padding: 2rem 3rem;
+                border-radius: 12px;
+                box-shadow: var(--shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.05));
+                border: 1px solid var(--border-color, #e4e4e7);
+            }
+
+            h1 {
+                color: var(--accent-text-color, #18181b);
+                margin-bottom: 1rem;
+            }
+
+            p {
+                font-size: 1.1rem;
+                color: var(--subtle-text, #71717a);
+            }
+
+            /* Basic dark mode check if your main style.css handles it via html.dark-mode */
+            html.dark-mode body {
+                --bg-color: #121212;
+                --text-color: #e2e8f0;
+                --card-bg: #1e1e1e;
+                --border-color: #2f2f2f;
+                --accent-text-color: #ffffff;
+                --subtle-text: #a1a1aa;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="mindmap-container">
+            <h1 id="mindmap-title">Mind Map</h1>
+            <p id="mindmap-subject-info">Loading subject information...</p>
+            <div id="mindmap-content">
+                <p><em>Mind map content for the selected subject will be displayed here.</em></p>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Function to apply dark mode if needed (simplified)
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+
+
+                const mindMapTitle = document.getElementById('mindmap-title');
+                const subjectInfoParagraph = document.getElementById('mindmap-subject-info');
+
+                // Get the subject ID from the URL query parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const subjectId = urlParams.get('subject');
+
+                if (subjectId) {
+                    // You would typically fetch the subject name using the ID
+                    // For this placeholder, we'll just use the ID.
+                    // In a real app, you might fetch data/os.json, data/dbms.json etc.
+                    // or have a mapping from ID to name.
+                    let subjectName = subjectId.toUpperCase(); // Placeholder name
+
+                    // Simple mapping for demonstration
+                    const subjectNames = {
+                        'os': 'Operating Systems',
+                        'dbms': 'Database Management',
+                        'system-design': 'System Design',
+                        'dsa': 'Data Structures & Algorithms'
+                    };
+                    if (subjectNames[subjectId]) {
+                        subjectName = subjectNames[subjectId];
+                    }
+
+                    mindMapTitle.textContent = `Mind Map for ${subjectName}`;
+                    subjectInfoParagraph.textContent = `Displaying mind map for subject ID: ${subjectId}.`;
+
+                    // TODO: Add your mind map generation/rendering logic here
+                    // For example, using a library like Markmap, Mermaid, etc.
+                    // Or fetching specific mind map data for this subjectId.
+
+                } else {
+                    mindMapTitle.textContent = 'Mind Map';
+                    subjectInfoParagraph.textContent = 'No subject selected. Please access this page via a subject card.';
+                    document.getElementById('mindmap-content').innerHTML = '<p><em>Please select a subject from the main page.</em></p>';
+                }
+            });
+        </script>
+    </body>
+
+</html>
