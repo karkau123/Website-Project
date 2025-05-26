@@ -13,9 +13,25 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-        <script src="js/data_manager.js" defer></script>
-        <script src="js/ui_manager.js" defer></script>
+
+        <script>
+            // Firebase configuration provided by the user
+            const __app_id = 'placement-preparation-website'; // Using projectId as the general app identifier
+            const __firebase_config = JSON.stringify({
+                apiKey: "AIzaSyByfTCA3Gn18TrWubL--7mCrGjeDPeExLs",
+                authDomain: "placement-preparation-website.firebaseapp.com",
+                projectId: "placement-preparation-website",
+                storageBucket: "placement-preparation-website.firebasestorage.app",
+                messagingSenderId: "667068078157",
+                appId: "1:667068078157:web:f5614c76afa7e489c52404",
+                measurementId: "G-1ECX1T9QHY"
+            });
+            const __initial_auth_token = undefined; // Leave as undefined if not using custom tokens for initial sign-in
+        </script>
+
         <script src="js/theme_manager.js" defer></script>
+        <script src="js/ui_manager.js" defer></script>
+        <script type="module" src="js/data_manager.js" defer></script>
         <script type="module" src="js/main.js" defer></script>
     </head>
 
@@ -57,7 +73,8 @@
                                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                             </svg>
                         </button>
-                        <button id="profile-btn" class="header-icon-btn" aria-label="Open profile">
+                        <button id="profile-btn" class="header-icon-btn" aria-label="Open profile"
+                            style="display: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="feather feather-user">
@@ -80,6 +97,7 @@
         </div>
 
         <main class="container">
+            <p style="text-align:center; padding:20px;">Loading dashboard...</p>
         </main>
 
     </body>

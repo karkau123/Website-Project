@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LLM Page Helper</title>
+        <style>
+            /* Dark Theme Styles */
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background-color: #1a1a1a;
+                /* Dark background for the page */
+                margin: 0;
+                padding: 20px;
+                box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            }
+
+            #llm-support-widget {
+                border: 1px solid #333333;
+                /* Darker border */
+                padding: 25px;
+                margin-top: 25px;
+                border-radius: 12px;
+                background-color: #262626;
+                /* Dark widget background */
+                max-width: 600px;
+                width: 100%;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                /* Adjusted shadow for dark theme */
+            }
+
+            #llm-support-widget h3 {
+                margin-top: 0;
+                margin-bottom: 20px;
+                color: #e0e0e0;
+                /* Light grey heading color */
+                font-size: 1.5em;
+                text-align: center;
+            }
+
+            #llm-user-question {
+                width: calc(100% - 22px);
+                min-height: 70px;
+                margin-bottom: 15px;
+                padding: 12px;
+                border: 1px solid #444444;
+                /* Grey border */
+                border-radius: 6px;
+                font-size: 1em;
+                resize: vertical;
+                background-color: #333333;
+                /* Dark textarea background */
+                color: #d4d4d4;
+                /* Light text color for textarea */
+            }
+
+            #llm-user-question::placeholder {
+                color: #888888;
+                /* Lighter placeholder text */
+            }
+
+            #llm-ask-button {
+                display: block;
+                width: 100%;
+                padding: 12px 20px;
+                border: none;
+                background-color: #007bff;
+                /* Primary action blue - can be kept or changed to a grey */
+                color: white;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.1em;
+                transition: background-color 0.2s ease-in-out;
+            }
+
+            #llm-ask-button:hover {
+                background-color: #0056b3;
+                /* Darker blue on hover */
+            }
+
+            #llm-ask-button:disabled {
+                background-color: #555555;
+                /* Darker grey when disabled */
+                color: #888888;
+                cursor: not-allowed;
+            }
+
+            #llm-response-area {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #333333;
+                /* Dark background for response area */
+                border: 1px solid #444444;
+                /* Grey border for response area */
+                border-radius: 6px;
+                min-height: 60px;
+                color: #c7c7c7;
+                /* Light grey text color for response */
+                white-space: pre-wrap;
+                line-height: 1.6;
+            }
+
+            #llm-response-area.loading {
+                color: #999999;
+                /* Lighter grey for loading text */
+            }
+
+            #llm-response-area p {
+                margin: 0;
+                /* Remove default paragraph margin if it's just for the response text */
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div id="llm-support-widget">
+            <h3>Ask Gemini AI</h3>
+            <textarea id="llm-user-question" placeholder="Type your question..."></textarea>
+            <button id="llm-ask-button">Ask AI</button>
+            <div id="llm-response-area">
+                <p>AI's answer will appear here.</p>
+            </div>
+        </div>
+
+        <script>
+            // --- JavaScript Logic for the Simple LLM Helper ---
+
+            // ===================================================================
+            // PASTE YOUR NEW, SECURE API KEY HERE
+            // For production, use a backend to protect your API key.
+            const GEMINI_API_KEY = "AIzaSyCSQ4sfioDHkiu4gbKeXa-6Xgrm7f0OvOg";
+            // ===================================================================
+
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            // Get references to the HTML elements
+            const askButton = document.getElementById('llm-ask-button');
+            const userQuestionInput = document.getElementById('llm-user-question');
+            const responseArea = document.getElementById('llm-response-area');
+
+            // Add a click listener to the ask button
+            askButton.addEventListener('click', handleAskAI);
+            // Allow pressing Enter in the textarea to submit
+            userQuestionInput.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter' && !event.shiftKey) { // Send on Enter, allow Shift+Enter for new line
+                    event.preventDefault(); // Prevent new line in textarea
+                    handleAskAI();
+                }
+            });
+
+
+            async function handleAskAI() {
+                const userQuestion = userQuestionInput.value.trim();
+                if (!userQuestion) {
+                    responseArea.innerHTML = "<p>Please type a question first.</p>";
+                    return;
+                }
+                if (!GEMINI_API_KEY || GEMINI_API_KEY === "REPLACE_WITH_YOUR_NEW_API_KEY") {
+                    responseArea.innerHTML = "<p><strong>Error:</strong> API Key not configured. Please replace the placeholder in the script with your new key.</p>";
+                    return;
+                }
+
+                // Disable button and show loading message
+                askButton.disabled = true;
+                responseArea.classList.add('loading');
+                responseArea.innerHTML = "<p>Thinking...</p>";
+
+                try {
+                    // MODIFIED PROMPT for more concise answers:
+                    const prompt = `
+                    You are a helpful and knowledgeable AI assistant. 
+                    Please provide a concise and to-the-point answer to the user's question.
+                    Avoid over-explaining unless specifically asked for more detail.
+
+                    USER'S QUESTION:
+                    ${userQuestion}
+                `;
+
+                    // Construct the payload for the Gemini API
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+
+
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("API Error Data:", errorData);
+                        throw new Error(`API call failed with status: ${response.status}. ${errorData.error?.message || ''}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.candidates && data.candidates.length > 0 &&
+                        data.candidates[0].content && data.candidates[0].content.parts &&
+                        data.candidates[0].content.parts.length > 0) {
+                        const aiResponse = data.candidates[0].content.parts[0].text;
+                        // Sanitize HTML-like characters to prevent XSS if the AI somehow outputs them
+                        const sanitizedResponse = aiResponse.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        responseArea.innerHTML = `<p>${sanitizedResponse.replace(/\n/g, '<br>')}</p>`;
+                    } else {
+                        console.error("Unexpected API response structure:", data);
+                        if (data.promptFeedback && data.promptFeedback.blockReason) {
+                            responseArea.innerHTML = `<p>Request blocked: ${data.promptFeedback.blockReason}. ${data.promptFeedback.blockReasonMessage || ''}</p>`;
+                        } else {
+                            responseArea.innerHTML = "<p>Received an empty or unexpected response from the AI. Please check the console.</p>";
+                        }
+                    }
+
+                } catch (error) {
+                    console.error("Error interacting with Gemini API:", error);
+                    responseArea.innerHTML = `<p><strong>Error:</strong> ${error.message || "Could not connect to the AI assistant."}</p>`;
+                } finally {
+                    askButton.disabled = false;
+                    responseArea.classList.remove('loading');
+                }
+            }
+        </script>
+
+    </body>
+
+</html>

@@ -4,6 +4,21 @@
     <head>
         <meta charset="UTF-8">
         <title>Login / Register</title>
+
+        <script>
+            // Firebase configuration provided by the user
+            const __app_id = 'placement-preparation-website'; // Using projectId as the general app identifier
+            const __firebase_config = JSON.stringify({
+                apiKey: "AIzaSyByfTCA3Gn18TrWubL--7mCrGjeDPeExLs",
+                authDomain: "placement-preparation-website.firebaseapp.com",
+                projectId: "placement-preparation-website",
+                storageBucket: "placement-preparation-website.firebasestorage.app",
+                messagingSenderId: "667068078157",
+                appId: "1:667068078157:web:f5614c76afa7e489c52404",
+                measurementId: "G-1ECX1T9QHY"
+            });
+            const __initial_auth_token = undefined; // Leave as undefined
+        </script>
         <script type="module" src="js/app.js" defer></script>
         <style>
             * {
@@ -112,13 +127,14 @@
         </form>
 
         <script>
+            // This script is now redundant as the logic is handled better in app.js.
+            // It can be safely removed to avoid confusion. For now, it's left as is.
             const nameField = document.getElementById('nameField');
             const registerBtn = document.getElementById('registerButton');
             const loginBtn = document.getElementById('loginButton');
 
             registerBtn.addEventListener('click', () => {
                 nameField.style.display = 'block';
-                // You can handle the register logic in js/app.js
             });
 
             loginBtn.addEventListener('click', () => {
