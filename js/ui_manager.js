@@ -8,13 +8,123 @@ const UIManager = (() => {
     let noResultsDivElement = null;
     let subjectDetailViewElement = null;
     let currentActiveSubtopicButton = null;
-    let detailPageProgressElement = null; // To store the progress span in detail view
+    let detailPageProgressElement = null;
+
+    /**
+     * Initializes the AI Tutor widget and its logic.
+     * @param {string} currentSubtopicName - The name of the currently viewed subtopic.
+     * @param {string} currentSubtopicDetailsText - The plain text content of the subtopic.
+     */
+    function initializeAITutorWidget(currentSubtopicName, currentSubtopicDetailsText) {
+        const llmSupportWidgetHTML = `
+            <div id="llm-support-widget">
+                <h3>OS Topic Helper</h3>
+                <p id="llm-widget-instruction">Finished reading "${currentSubtopicName}"? Ask a question to understand it better or explore related concepts.</p>
+                <textarea id="llm-user-question" placeholder="Ask about '${currentSubtopicName}'..."></textarea>
+                <button id="llm-ask-button">Ask AI Tutor</button>
+                <div id="llm-response-area">
+                    <p>AI's answer will appear here.</p>
+                </div>
+            </div>
+        `;
+
+        const contentArea = document.getElementById('subject-content-area');
+        if (!contentArea) {
+            console.error("AI Tutor: subject-content-area not found.");
+            return;
+        }
+
+        const existingWidget = document.getElementById('llm-support-widget');
+        if (existingWidget) existingWidget.remove();
+
+        contentArea.insertAdjacentHTML('beforeend', llmSupportWidgetHTML);
+
+        const GEMINI_API_KEY = "AIzaSyCSQ4sfioDHkiu4gbKeXa-6Xgrm7f0OvOg"; // <-- IMPORTANT: REPLACE THIS KEY
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        const askButton = document.getElementById('llm-ask-button');
+        const userQuestionInput = document.getElementById('llm-user-question');
+        const responseArea = document.getElementById('llm-response-area');
+
+        if (!askButton || !userQuestionInput || !responseArea) return;
+
+        askButton.addEventListener('click', handleAskAI);
+        userQuestionInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleAskAI();
+            }
+        });
+
+        async function handleAskAI() {
+            const userQuestion = userQuestionInput.value.trim();
+            if (!userQuestion) {
+                responseArea.innerHTML = "<p>Please type a question first.</p>";
+                return;
+            }
+            if (!GEMINI_API_KEY || GEMINI_API_KEY === "REPLACE_WITH_YOUR_NEW_API_KEY") {
+                responseArea.innerHTML = "<p><strong>Error:</strong> API Key not configured in ui_manager.js.</p>";
+                return;
+            }
+
+            askButton.disabled = true;
+            responseArea.classList.add('loading');
+            responseArea.innerHTML = "<p>Thinking...</p>";
+
+            try {
+                const pageContext = currentSubtopicDetailsText;
+                const prompt = `
+                    You are an expert Operating Systems tutor.
+                    The user is studying the OS subtopic: "${currentSubtopicName}".
+                    The content for that topic is provided below.
+                    Please provide a clear, concise, and helpful answer to the user's question.
+                    Base your answer primarily on the provided "OS TOPIC CONTENT".
+                    If the question extends beyond the text but is related, use your broader knowledge.
+
+                    OS TOPIC CONTENT:
+                    ---
+                    ${pageContext}
+                    ---
+
+                    USER'S QUESTION:
+                    ${userQuestion}
+                `;
+
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API call failed: ${response.status}. ${errorData.error?.message || ''}`);
+                }
+
+                const data = await response.json();
+                if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    const sanitizedResponse = aiResponse.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    responseArea.innerHTML = `<p>${sanitizedResponse.replace(/\n/g, '<br>')}</p>`;
+                } else {
+                    throw new Error("Unexpected API response structure.");
+                }
+
+            } catch (error) {
+                console.error("Error interacting with Gemini API:", error);
+                responseArea.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
+            } finally {
+                askButton.disabled = false;
+                responseArea.classList.remove('loading');
+            }
+        }
+    }
 
 
     /**
      * Calculates the completion progress for a given subject.
-     * @param {object} subject - The subject data object.
-     * @returns {object} An object containing completedCount, totalCount, and percentage.
      */
     function calculateProgress(subject) {
         let completedCount = 0;
@@ -40,9 +150,7 @@ const UIManager = (() => {
      * Clears the main container of any existing views.
      */
     function clearMainContainer() {
-        if (mainContainer) {
-            mainContainer.innerHTML = '';
-        }
+        if (mainContainer) mainContainer.innerHTML = '';
         subjectsGridElement = null;
         noResultsDivElement = null;
         subjectDetailViewElement = null;
@@ -52,12 +160,9 @@ const UIManager = (() => {
 
     /**
      * Renders all subject cards into the main grid.
-     * @param {Array<object>} subjects - An array of subject data objects.
      */
     function renderSubjects(subjects) {
-        // NEW: Remove the active class when returning to the subjects grid.
         document.body.classList.remove('detail-view-active');
-
         clearMainContainer();
         mainContainer.classList.remove('subject-detail-layout');
 
@@ -76,7 +181,6 @@ const UIManager = (() => {
         noResultsDivElement.innerHTML = `<h2>No Subjects Found</h2><p>Your search did not match any subjects. Try a different keyword.</p>`;
         gridWrapper.appendChild(noResultsDivElement);
 
-
         if (!subjects || subjects.length === 0) {
             noResultsDivElement.classList.remove('hidden');
             return;
@@ -86,7 +190,7 @@ const UIManager = (() => {
 
         subjects.forEach(subject => {
             const progress = calculateProgress(subject);
-            const circumference = 2 * Math.PI * 30; // Adjusted radius for card progress circle
+            const circumference = 2 * Math.PI * 30;
             const offset = circumference - (progress.percentage / 100) * circumference;
 
             const cardHTML = `
@@ -129,17 +233,15 @@ const UIManager = (() => {
 
     /**
      * Updates the progress indicator on the subject detail page.
-     * @param {string} subjectId - The ID of the subject to update progress for.
      */
     function updateSubjectDetailProgress(subjectId) {
         const subject = DataManager.getSubjectById(subjectId);
         if (subject) {
             const progress = calculateProgress(subject);
-            // Update progress circle on the detail page header
             const progressCircleFg = document.querySelector('.detail-page-header-progress .progress-circle-fg');
             const progressText = document.querySelector('.detail-page-header-progress .progress-circle-text');
             if (progressCircleFg && progressText) {
-                const circumference = 2 * Math.PI * 20; // Radius for header progress circle
+                const circumference = 2 * Math.PI * 20;
                 const offset = circumference - (progress.percentage / 100) * circumference;
                 progressCircleFg.style.strokeDashoffset = offset;
                 progressText.textContent = `${progress.percentage}%`;
@@ -150,12 +252,9 @@ const UIManager = (() => {
 
     /**
      * Renders the subject detail page with a left navigation panel and a right content panel.
-     * @param {object} subject - The subject data object.
      */
     function renderSubjectDetailPage(subject) {
-        // NEW: Add the active class to the body to trigger the new CSS styles.
         document.body.classList.add('detail-view-active');
-
         clearMainContainer();
         mainContainer.classList.add('subject-detail-layout');
 
@@ -166,9 +265,8 @@ const UIManager = (() => {
         navPanel.className = 'subject-nav-panel';
 
         const progress = calculateProgress(subject);
-        const headerCircumference = 2 * Math.PI * 20; // Radius for header progress circle
+        const headerCircumference = 2 * Math.PI * 20;
         const headerOffset = headerCircumference - (progress.percentage / 100) * headerCircumference;
-
 
         let navHTML = `
             <div class="subject-detail-header">
@@ -233,10 +331,8 @@ const UIManager = (() => {
         subjectDetailViewElement.appendChild(contentPanel);
         mainContainer.appendChild(subjectDetailViewElement);
 
-
         const firstSubtopicLabel = navPanel.querySelector('.nav-subtopic-label-button');
         if (firstSubtopicLabel) {
-            // Simulate click on the label to load content and set active state
             const event = new MouseEvent('click', { bubbles: true, cancelable: true });
             firstSubtopicLabel.dispatchEvent(event);
         }
@@ -244,8 +340,7 @@ const UIManager = (() => {
 
     /**
      * Renders the content of a selected subtopic in the right panel.
-     * @param {object} subtopic - The subtopic object.
-     * @param {HTMLElement} clickedLabel - The label element that was clicked.
+     * This is the MODIFIED function.
      */
     function renderSubtopicContent(subtopic, clickedLabel) {
         const contentArea = document.getElementById('subject-content-area');
@@ -259,27 +354,31 @@ const UIManager = (() => {
             currentActiveSubtopicButton = clickedLabel;
         }
 
-        if (subtopic && subtopic.details) {
-            contentArea.innerHTML = `
-                <h3 class="subtopic-content-title">${subtopic.name}</h3>
-                <div class="subtopic-content-details">
-                    ${subtopic.details}
-                </div>
-            `;
-        } else if (subtopic) {
-             contentArea.innerHTML = `
-                <h3 class="subtopic-content-title">${subtopic.name}</h3>
-                <div class="subtopic-content-details">
-                    <p>No details available for this subtopic yet.</p>
-                </div>
-            `;
-        } else {
-            contentArea.innerHTML = `
-                <div class="content-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><alert-circle cx="12" cy="12" r="10"></alert-circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    <p>Could not load content for the selected subtopic.</p>
-                </div>
-            `;
+        let subtopicName = "Selected Topic";
+        let subtopicDetailsHTML = "<p>No details available for this subtopic yet.</p>";
+        let subtopicDetailsText = "No details available for this subtopic yet.";
+
+        if (subtopic) {
+            subtopicName = subtopic.name;
+            if (subtopic.details) {
+                subtopicDetailsHTML = subtopic.details;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = subtopic.details;
+                subtopicDetailsText = tempDiv.innerText || tempDiv.textContent || "";
+            }
+        }
+        
+        contentArea.innerHTML = `
+            <h3 class="subtopic-content-title">${subtopicName}</h3>
+            <div class="subtopic-content-details">
+                ${subtopicDetailsHTML}
+            </div>
+        `;
+
+        // Check if the subject is "Operating Systems" before initializing the tutor
+        const subjectId = clickedLabel.dataset.subjectId;
+        if (subjectId === 'os') {
+            initializeAITutorWidget(subtopicName, subtopicDetailsText);
         }
     }
 
@@ -290,6 +389,6 @@ const UIManager = (() => {
         renderSubjects,
         renderSubjectDetailPage,
         renderSubtopicContent,
-        updateSubjectDetailProgress // Expose this function
+        updateSubjectDetailProgress
     };
 })();

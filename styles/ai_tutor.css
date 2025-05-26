@@ -1,0 +1,85 @@
+/* Dark Theme Styles for the AI Tutor Widget */
+#llm-support-widget {
+    border: 1px solid #333333;
+    padding: 25px;
+    margin-top: 30px; /* Add space between page content and widget */
+    border-radius: 12px;
+    background-color: #262626;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#llm-support-widget h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#llm-widget-instruction {
+    color: #b0b0b0;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#llm-user-question {
+    width: calc(100% - 24px); 
+    min-height: 70px;
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #444444;
+    border-radius: 6px;
+    font-size: 1em;
+    resize: vertical;
+    background-color: #333333;
+    color: #d4d4d4;
+    font-family: inherit;
+}
+
+#llm-user-question::placeholder {
+    color: #888888;
+}
+
+#llm-ask-button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#llm-ask-button:hover {
+    background-color: #0056b3;
+}
+
+#llm-ask-button:disabled {
+    background-color: #555555;
+    color: #888888;
+    cursor: not-allowed;
+}
+
+#llm-response-area {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #333333;
+    border: 1px solid #444444;
+    border-radius: 6px;
+    min-height: 60px;
+    color: #c7c7c7;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+#llm-response-area.loading {
+    color: #999999;
+}
+
+#llm-response-area p {
+    margin: 0;
+}
