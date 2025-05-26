@@ -55,6 +55,9 @@ const UIManager = (() => {
      * @param {Array<object>} subjects - An array of subject data objects.
      */
     function renderSubjects(subjects) {
+        // NEW: Remove the active class when returning to the subjects grid.
+        document.body.classList.remove('detail-view-active');
+
         clearMainContainer();
         mainContainer.classList.remove('subject-detail-layout');
 
@@ -130,9 +133,8 @@ const UIManager = (() => {
      */
     function updateSubjectDetailProgress(subjectId) {
         const subject = DataManager.getSubjectById(subjectId);
-        if (subject && detailPageProgressElement) {
+        if (subject) {
             const progress = calculateProgress(subject);
-            detailPageProgressElement.textContent = `(${progress.percentage}%)`;
             // Update progress circle on the detail page header
             const progressCircleFg = document.querySelector('.detail-page-header-progress .progress-circle-fg');
             const progressText = document.querySelector('.detail-page-header-progress .progress-circle-text');
@@ -151,6 +153,9 @@ const UIManager = (() => {
      * @param {object} subject - The subject data object.
      */
     function renderSubjectDetailPage(subject) {
+        // NEW: Add the active class to the body to trigger the new CSS styles.
+        document.body.classList.add('detail-view-active');
+
         clearMainContainer();
         mainContainer.classList.add('subject-detail-layout');
 
@@ -187,14 +192,6 @@ const UIManager = (() => {
                 <p class="detail-page-description">${subject.description}</p>
             </div>
         `;
-        // Store the span for live updates
-        // Note: This was the old way, now using the circle above.
-        // detailPageProgressElement = document.createElement('span');
-        // detailPageProgressElement.id = 'detail-page-progress-value';
-        // detailPageProgressElement.textContent = `(${progress.percentage}%)`;
-        // // This needs to be inserted into the navHTML or appended to the title container.
-        // // For simplicity, the circle is directly in navHTML. We'll update it via updateSubjectDetailProgress.
-
 
         if (subject.topics && subject.topics.length > 0) {
             subject.topics.forEach((topic, topicIndex) => {
@@ -236,9 +233,6 @@ const UIManager = (() => {
         subjectDetailViewElement.appendChild(contentPanel);
         mainContainer.appendChild(subjectDetailViewElement);
 
-        // After appending, find the progress element if we were using the span approach
-        // detailPageProgressElement = document.getElementById('detail-page-progress-value');
-        // For the circle approach, updateSubjectDetailProgress will find it.
 
         const firstSubtopicLabel = navPanel.querySelector('.nav-subtopic-label-button');
         if (firstSubtopicLabel) {

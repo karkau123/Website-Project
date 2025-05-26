@@ -1,0 +1,153 @@
+/* --- SUBJECTS GRID (Home Page) --- */
+.subjects-grid-wrapper {
+    width: 100%;
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.no-results {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--subtle-text);
+    width: 100%;
+}
+
+/* --- SUBJECT CARD (Simplified with Progress) --- */
+.subject-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    outline: none;
+    height: 100%;
+}
+
+.subject-card-link:focus-visible .subject-card {
+    box-shadow: 0 0 0 3px var(--bg-color), 0 0 0 5px var(--accent-color);
+}
+
+.subject-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+    cursor: pointer;
+    height: 100%;
+}
+
+.subject-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+html.dark-mode .subject-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.4);
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-icon svg {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+.card-description {
+    color: var(--subtle-text);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.card-progress-circle {
+    width: 70px;
+    height: 70px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.progress-circle-svg {
+    transform: rotate(-90deg);
+}
+
+.progress-circle-bg, .progress-circle-fg {
+    fill: none;
+    stroke-width: 6;
+}
+
+.progress-circle-bg {
+    stroke: var(--progress-circle-bg-color);
+}
+
+.progress-circle-fg {
+    stroke: var(--progress-circle-fg-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.progress-circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.card-footer-icon {
+    align-self: flex-end;
+    margin-top: auto;
+}
+
+.mindmap-card-btn {
+    background: none;
+    border: none;
+    color: var(--bulb-color);
+    padding: 0.25rem;
+    border-radius: 50%;
+    display: inline-flex;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.mindmap-card-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mindmap-card-btn:hover {
+    background-color: var(--bulb-hover-bg);
+    color: var(--bulb-hover-color);
+}

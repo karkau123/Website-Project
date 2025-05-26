@@ -1,0 +1,107 @@
+/* Basic Reset and Font Setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- THEME VARIABLES --- */
+:root {
+    --bg-color: #f4f4f5; /* Light grey background */
+    --text-color: #18181b; /* Very dark grey (almost black) text */
+    --card-bg: #ffffff; /* White card background */
+    --header-bg: #ffffff; /* White header background */
+    --border-color: #d4d4d8; /* Lighter grey border */
+    --accent-color: #4b5563; /* Medium grey for light mode accents */
+    --accent-text-color: #18181b; /* Dark text for accents */
+    --subtle-text: #71717a; /* Medium-dark grey for subtle text */
+    --input-bg: #e5e7eb; /* Light grey input background */
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --header-shadow: 0 6px 12px -2px rgba(0,0,0,0.07), 0 3px 7px -3px rgba(0,0,0,0.07);
+    --scrollbar-thumb-bg: #a1a1aa; /* Medium grey scrollbar thumb */
+    --scrollbar-track-bg: var(--input-bg);
+    --button-bg: #27272a; /* Dark grey button */
+    --button-text: #ffffff; /* White text on button */
+    --button-hover-bg: #3f3f46; /* Slightly lighter dark grey on hover */
+    --bulb-color: #71717a; /* Grey bulb */
+    --bulb-hover-color: #3f3f46; /* Darker grey bulb on hover */
+    --bulb-hover-bg: rgba(0, 0, 0, 0.05);
+    --nav-panel-bg: var(--card-bg);
+    --content-panel-bg: var(--card-bg);
+    --nav-item-hover-bg: var(--input-bg);
+    --nav-item-active-bg: #4b5563; /* Medium grey for active nav item */
+    --nav-item-active-text: #ffffff; /* White text for active nav item */
+    --progress-circle-fg-color: var(--accent-color);
+    --progress-circle-bg-color: var(--input-bg);
+    --checkbox-border-color: var(--subtle-text);
+    --checkbox-checked-bg: var(--accent-color);
+    --checkbox-checked-border: var(--accent-color);
+}
+
+html.dark-mode {
+    --bg-color: #121212; /* True black background */
+    --text-color: #e0e0e0; /* Light grey text (slightly brighter) */
+    --card-bg: #1e1e1e; /* Very dark grey card background */
+    --header-bg: #1e1e1e; /* Very dark grey header background */
+    --border-color: #2c2c2c; /* Dark grey border */
+    --accent-color: #b0b0b0; /* Lighter neutral grey for dark mode accents */
+    --accent-text-color: #ffffff; /* White for accent text */
+    --subtle-text: #757575; /* Medium neutral grey for subtle text */
+    --input-bg: #2c2c2c; /* Dark grey input background */
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.3); /* Darker shadow for contrast */
+    --header-shadow: 0 6px 12px -2px rgba(0,0,0,0.35), 0 3px 7px -3px rgba(0,0,0,0.35);
+    --scrollbar-thumb-bg: #424242; /* Darker grey scrollbar thumb */
+    --nav-panel-bg: var(--card-bg);
+    --content-panel-bg: var(--card-bg);
+    --nav-item-hover-bg: #2c2c2c; /* Hover for nav items - dark grey */
+    --nav-item-active-bg: #424242; /* Active nav item background - medium dark grey */
+    --nav-item-active-text: #ffffff; /* Active nav item text - white */
+    --bulb-color: #9e9e9e; /* Grey bulb in dark mode */
+    --bulb-hover-color: #e0e0e0; /* Lighter grey bulb on hover */
+    --bulb-hover-bg: rgba(255, 255, 255, 0.08);
+    --progress-circle-fg-color: var(--accent-color);
+    --progress-circle-bg-color: var(--input-bg);
+    --checkbox-border-color: var(--subtle-text);
+    --checkbox-checked-bg: var(--accent-color); /* Checkbox checked is accent grey */
+    --checkbox-checked-border: var(--accent-color);
+    --button-bg: #333333; /* Dark grey button in dark mode */
+    --button-text: #e0e0e0; /* Light text on button */
+    --button-hover-bg: #424242; /* Slightly lighter grey on hover */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.hidden { display: none !important; }
+
+main.container {
+    padding-top: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 1rem;
+}
+
+body.modal-open .site-header-wrapper,
+body.modal-open main.container > *:not(.modal-overlay) {
+    filter: blur(4px);
+    pointer-events: none;
+}
+body.modal-open .modal-overlay {
+    filter: none;
+    pointer-events: auto;
+}
