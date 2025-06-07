@@ -1,4 +1,4 @@
-# 🚀 CSE Placement Preparator
+# 🚀 CSE PrepMate
 
 A web application designed to help students prepare efficiently for Computer Science placements.
 
