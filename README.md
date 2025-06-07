@@ -1,4 +1,4 @@
-# 🚀 CSE Placement Prep
+# 🚀 CSE Placement Preparator
 
 A web application designed to help students prepare efficiently for Computer Science placements.
 
